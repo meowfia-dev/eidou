@@ -9,8 +9,7 @@
     <a href="https://ko-fi.com/meowfia"><img src="https://img.shields.io/badge/Ko--fi-Support%20Us-ff5e5b?logo=ko-fi&logoColor=white" alt="Ko-fi" /></a>
   </p>
   
-  <video src="docs/assets/demo.mp4" controls="controls" muted="muted" class="d-block rounded-bottom-2 border-top width-fit" style="max-height:640px; min-height: 200px">
-  </video>
+  <img src="docs/assets/demo.png" alt="Eidou Demo" style="max-width: 100%; border-radius: 8px; margin-top: 16px;" />
 </div>
 
 > [繁體中文](README.zh-TW.md) | [English](README.md)
