@@ -1,0 +1,25 @@
+export const SPACING_TOKENS = ["0", "1", "2", "3", "4", "5", "6", "8", "10", "12", "16"] as const;
+export const GAP_TOKENS = ["0", "1", "2", "3", "4", "6", "8"] as const;
+export const COLOR_TOKENS = ["primary", "primary-dim", "primary-bright", "foreground", "muted", "danger", "info", "success", "warning"] as const;
+export const BG_TOKENS = ["transparent", "card", "primary", "primary-dim", "primary-bright", "muted", "danger", "info", "success", "warning", "elevated", "divider"] as const;
+export const OPACITY_TOKENS = ["10", "20", "40", "60", "80", "100"] as const;
+export const RADIUS_TOKENS = ["none", "sm", "base", "md", "lg", "full"] as const;
+export const SHADOW_TOKENS = ["none", "neon-sm", "neon", "neon-lg", "neon-xl", "neon-dim", "float", "danger-glow", "info-glow", "screen"] as const;
+export const TEXT_SIZE_TOKENS = ["xs", "sm", "base", "lg", "xl", "2xl", "3xl"] as const;
+export const FONT_WEIGHT_TOKENS = ["normal", "medium", "semibold", "bold"] as const;
+export const ALIGN_TOKENS = ["start", "center", "end", "stretch"] as const;
+export const JUSTIFY_TOKENS = ["start", "center", "end", "between", "around"] as const;
+export const TRACKING_TOKENS = ["normal", "wide", "wider", "widest"] as const;
+
+export type SpacingToken = typeof SPACING_TOKENS[number];
+export type GapToken = typeof GAP_TOKENS[number];
+export type ColorToken = typeof COLOR_TOKENS[number];
+export type BgToken = typeof BG_TOKENS[number];
+export type OpacityToken = typeof OPACITY_TOKENS[number];
+export type RadiusToken = typeof RADIUS_TOKENS[number];
+export type ShadowToken = typeof SHADOW_TOKENS[number];
+export type TextSizeToken = typeof TEXT_SIZE_TOKENS[number];
+export type FontWeightToken = typeof FONT_WEIGHT_TOKENS[number];
+export type AlignToken = typeof ALIGN_TOKENS[number];
+export type JustifyToken = typeof JUSTIFY_TOKENS[number];
+export type TrackingToken = typeof TRACKING_TOKENS[number];

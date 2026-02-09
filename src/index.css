@@ -1,0 +1,1037 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Noto Sans Mono CJK TC';
+    src: url('./assets/fonts/noto-sans-mono-cjk/NotoSansMonoCJKtc-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Noto Sans Mono CJK TC';
+    src: url('./assets/fonts/noto-sans-mono-cjk/NotoSansMonoCJKtc-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('./assets/fonts/jet-brains-mono/JetBrainsMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('./assets/fonts/jet-brains-mono/JetBrainsMono-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Space Mono';
+    src: url('./assets/fonts/space-mono/SpaceMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Space Mono';
+    src: url('./assets/fonts/space-mono/SpaceMono-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  :root {
+    color-scheme: dark;
+    /* ========================================
+       EIDOU DESIGN SYSTEM v4.0 (Tactical Terminal)
+       
+       Philosophy: "Comfortable Cyberpunk"
+       - Void Background (#050505) = True black terminal
+       - Cyber Green (#7CFF00) = Accent (dots, values, hover)
+       - Dark Olive (#3F6212) = Structure (borders, glow, corners)
+       - Bright Green (#9DFF40) = Feedback (hover/active)
+       - ZERO RADIUS everywhere (strictly no rounded corners)
+       - Snappy transitions (75-150ms)
+       - 4-corner L-brackets on containers
+       
+       Layer 1: Themeable Core (ThemeProvider can override) - 7 vars
+       Layer 2: Extended (fixed text hierarchy, semantic)
+       Layer 3: Structural (fixed, all themes share)
+       ======================================== */
+
+    /* === LAYER 1: THEMEABLE CORE (7 vars) === */
+    /* ThemeProvider controls these via CSS_VAR_MAP */
+    --eidou-color-bg-rgb: 5 5 5;
+    /* #050505 void */
+    --eidou-color-surface-rgb: 10 10 12;
+    /* #0A0A0C */
+    --eidou-color-text-rgb: 203 213 225;
+    /* #CBD5E1 slate-300, headings */
+    --eidou-color-primary-rgb: 124 255 0;
+    /* #7CFF00 cyber green (accent) */
+    --eidou-color-primary-dim-rgb: 63 98 18;
+    /* #3F6212 dark olive (structure) */
+    --eidou-color-primary-bright-rgb: 157 255 64;
+    /* #9DFF40 bright (hover/active) */
+    --eidou-color-border-rgb: 63 98 18;
+    /* #3F6212 matches primary-dim */
+    --eidou-radius-base: 0px;
+
+    /* === LAYER 2: EXTENDED SLATE (fixed text hierarchy) === */
+    --eidou-color-text-body-rgb: 148 163 184;
+    /* #94A3B8 slate-400, body */
+    --eidou-color-text-muted-rgb: 100 116 139;
+    /* #64748B slate-500, muted */
+    --eidou-color-text-dim-rgb: 71 85 105;
+    /* #475569 slate-600, very muted */
+    --eidou-color-elevated-rgb: 20 20 24;
+    /* #141418 */
+    --eidou-color-divider-rgb: 31 31 34;
+    /* #1F1F22 */
+    --eidou-color-void-pure-rgb: 0 0 0;
+    /* #000000 deepest canvas layer */
+
+    /* === LAYER 2: SEMANTIC COLORS (fixed) === */
+    --eidou-color-muted-rgb: 255 255 255;
+    --eidou-color-overlay-rgb: 0 0 0;
+    --eidou-color-primary-foreground-rgb: 0 0 0;
+    --eidou-color-thumb-rgb: 255 255 255;
+
+    --eidou-color-info-rgb: 0 240 255;
+    /* #00F0FF hologram cyan */
+    --eidou-color-success-rgb: 34 197 94;
+    /* #22C55E green-500 */
+    --eidou-color-warning-rgb: 234 179 8;
+    /* #EAB308 yellow-500 */
+    --eidou-color-danger-rgb: 239 68 68;
+    /* #EF4444 red-500 */
+    --eidou-color-danger-foreground-rgb: 255 255 255;
+
+    /* === LAYER 3: STRUCTURAL - RADIUS SCALE (v4: 0px everywhere) === */
+    --eidou-radius-none: 0px;
+    --eidou-radius-sm: 0px;
+    /* --eidou-radius-base defined above (themeable, 0px) */
+    --eidou-radius-md: 0px;
+    --eidou-radius-lg: 0px;
+    --eidou-radius-full: 9999px;
+
+    /* === LAYER 3: STRUCTURAL - EIDOU DNA === */
+    --eidou-skew-angle: -12deg;
+    --eidou-corner-size: 8px;
+
+    /* === LAYER 3: GLOW (Dual-Tone - olive for comfort, cyber for emphasis) === */
+    --eidou-glow-dim: 0 0 8px rgb(var(--eidou-color-primary-dim-rgb) / 0.3);
+    --eidou-glow-sm: 0 0 4px rgb(var(--eidou-color-primary-dim-rgb) / 0.5);
+    --eidou-glow-md: 0 0 8px rgb(var(--eidou-color-primary-dim-rgb) / 0.5);
+    --eidou-glow-lg: 0 0 12px rgb(var(--eidou-color-primary-rgb) / 0.4);
+    --eidou-glow-xl: 0 0 20px rgb(var(--eidou-color-primary-rgb) / 0.5), 0 0 40px rgb(var(--eidou-color-primary-rgb) / 0.2);
+    --eidou-glow-danger: 0 0 8px rgb(var(--eidou-color-danger-rgb) / 0.5);
+    --eidou-glow-warning: 0 0 8px rgb(var(--eidou-color-warning-rgb) / 0.5);
+    --eidou-glow-info: 0 0 8px rgb(var(--eidou-color-info-rgb) / 0.5);
+    --eidou-glow-screen: inset 0 0 60px rgba(0, 0, 0, 0.6);
+
+    /* === LAYER 3: TEXT GLOW (derived from primary) === */
+    --eidou-text-glow-sm: 0 0 4px rgb(var(--eidou-color-primary-rgb) / 0.5);
+    --eidou-text-glow-md: 0 0 8px rgb(var(--eidou-color-primary-rgb) / 0.5), 0 0 16px rgb(var(--eidou-color-primary-rgb) / 0.3);
+    --eidou-text-glow-lg: 0 0 10px rgb(var(--eidou-color-primary-rgb) / 0.8), 0 0 20px rgb(var(--eidou-color-primary-rgb) / 0.5), 0 0 40px rgb(var(--eidou-color-primary-rgb) / 0.3);
+
+    /* === LAYER 3: ANIMATION TOKENS (v4: snappier) === */
+    --eidou-duration-instant: 75ms;
+    --eidou-duration-fast: 100ms;
+    --eidou-duration-normal: 150ms;
+    --eidou-duration-slow: 300ms;
+    --eidou-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+    --eidou-ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --eidou-ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+    /* === LEGACY COMPAT (Deprecated) === */
+    --bg: var(--eidou-color-bg-rgb);
+    --text: rgb(var(--eidou-color-text-rgb));
+    --accent-neon: var(--eidou-color-primary-rgb);
+    --line: rgb(var(--eidou-color-border-rgb) / 0.2);
+    --radius: var(--eidou-radius-base);
+
+    /* === FONTS === */
+    --font-mono: "JetBrains Mono", "Noto Sans Mono CJK TC", monospace;
+    --font-body: "JetBrains Mono", "Noto Sans Mono CJK TC", monospace;
+    --font-heading: "Space Mono", "Noto Sans Mono CJK TC", monospace;
+  }
+
+  :root[data-eidou-theme="light"] {
+    color-scheme: light;
+    /* Light Mode Overrides (ThemeProvider controls these) */
+    --eidou-color-bg-rgb: 245 245 245;
+    --eidou-color-surface-rgb: 255 255 255;
+    --eidou-color-text-rgb: 31 41 55;
+    --eidou-color-primary-rgb: 0 0 0;
+    --eidou-color-border-rgb: 229 231 235;
+
+    /* Semantic Light Overrides */
+    --eidou-color-muted-rgb: 0 0 0;
+    --eidou-color-primary-foreground-rgb: 255 255 255;
+  }
+
+  body {
+    background-color: transparent;
+    color: rgb(var(--eidou-color-text-rgb));
+    font-family: var(--font-body);
+    overflow: hidden;
+    user-select: none;
+    /* Disable text selection globally */
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0px;
+  }
+
+  /* On Hover of the scrollable element: Show Thumb */
+  *:hover::-webkit-scrollbar-thumb {
+    background: rgb(var(--eidou-color-primary-dim-rgb) / 0.5);
+  }
+
+  /* On Hover of the thumb itself: Brighten */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--eidou-color-primary-rgb) / 0.8) !important;
+  }
+
+  /* Text Selection */
+  ::selection {
+    background: rgb(var(--eidou-color-primary-rgb) / 0.3);
+    color: rgb(var(--eidou-color-text-rgb));
+  }
+}
+
+@layer utilities {
+
+  /* === TEXT GLOW === */
+  .text-shadow-neon {
+    text-shadow: var(--eidou-text-glow-md);
+  }
+
+  .text-shadow-neon-sm {
+    text-shadow: var(--eidou-text-glow-sm);
+  }
+
+  .text-shadow-neon-lg {
+    text-shadow: var(--eidou-text-glow-lg);
+  }
+
+  /* === SCANLINE EFFECT === */
+  .scanline {
+    background: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0) 50%,
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(0, 0, 0, 0.1));
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+
+  /* === EIDOU DNA: CORNER ACCENTS (v4: All 4 L-Brackets via background-image) === */
+  .eidou-corners {
+    position: relative;
+  }
+
+  .eidou-corners::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    transition: opacity 100ms ease;
+    /* 8 gradients: 2 lines per corner (horizontal + vertical) */
+    background-image:
+      /* Top-left horizontal */
+      linear-gradient(to right, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      /* Top-left vertical */
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      /* Top-right horizontal */
+      linear-gradient(to left, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      /* Top-right vertical */
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      /* Bottom-left horizontal */
+      linear-gradient(to right, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      /* Bottom-left vertical */
+      linear-gradient(to top, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      /* Bottom-right horizontal */
+      linear-gradient(to left, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      /* Bottom-right vertical */
+      linear-gradient(to top, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb)));
+    background-size:
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size),
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size),
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size),
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size);
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom left, bottom left,
+      bottom right, bottom right;
+    background-repeat: no-repeat;
+  }
+
+  .eidou-corners:hover::before {
+    opacity: 1;
+    background-image:
+      linear-gradient(to right, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to right, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb)));
+  }
+
+  /* Corner accent - single top-right (for inputs, v2 Dual-Tone) */
+  .corner-accent {
+    position: relative;
+  }
+
+  .corner-accent::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--eidou-corner-size);
+    height: var(--eidou-corner-size);
+    border-color: rgb(var(--eidou-color-primary-dim-rgb));
+    /* olive default */
+    border-style: solid;
+    border-width: 1px 1px 0 0;
+    opacity: 0.4;
+    transition: opacity 100ms ease, border-color 100ms ease;
+    pointer-events: none;
+  }
+
+  .corner-accent:hover::after,
+  .corner-accent:focus-within::after {
+    border-color: rgb(var(--eidou-color-primary-rgb));
+    /* cyber on hover/focus */
+    opacity: 1;
+  }
+
+  /* === EIDOU DNA: SKEW === */
+  .eidou-skew {
+    transform: skewX(var(--eidou-skew-angle));
+  }
+
+  .eidou-skew-content {
+    transform: skewX(calc(var(--eidou-skew-angle) * -1));
+  }
+
+  /* === GLOW UTILITIES === */
+  .glow-sm {
+    box-shadow: var(--eidou-glow-sm);
+  }
+
+  .glow-md {
+    box-shadow: var(--eidou-glow-md);
+  }
+
+  .glow-lg {
+    box-shadow: var(--eidou-glow-lg);
+  }
+
+  .glow-xl {
+    box-shadow: var(--eidou-glow-xl);
+  }
+
+  /* === GLITCH ANIMATION === */
+  @keyframes glitch-flicker {
+
+    0%,
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    10% {
+      opacity: 0.8;
+      transform: translateX(-2px);
+    }
+
+    20% {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+
+    30% {
+      opacity: 0.9;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-glitch {
+    animation: glitch-flicker 0.3s ease-in-out;
+  }
+
+  /* === SCANLINE MOVING ANIMATION === */
+  @keyframes scanline-move {
+    0% {
+      top: -10%;
+    }
+
+    100% {
+      top: 110%;
+    }
+  }
+
+  .animate-scanline-move {
+    animation: scanline-move 3s linear infinite;
+  }
+
+  /* === BLINK ANIMATION === */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .animate-blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  /* === APPEAR ANIMATION === */
+  @keyframes appear {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-appear {
+    animation: appear 0.2s ease-out;
+  }
+
+  /* === FLICKER ANIMATION === */
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    33% { opacity: 0.95; }
+    66% { opacity: 0.98; }
+  }
+
+  .animate-flicker {
+    animation: flicker 0.3s infinite;
+  }
+
+  /* === PULSE-GLOW ANIMATION === */
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: var(--eidou-glow-dim); }
+    50% { box-shadow: var(--eidou-glow-md); }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* === BACKGROUND PATTERNS === */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgb(var(--eidou-color-divider-rgb) / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--eidou-color-divider-rgb) / 0.3) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .bg-dots {
+    background-image: radial-gradient(
+      rgb(var(--eidou-color-divider-rgb) / 0.4) 1px,
+      transparent 1px
+    );
+    background-size: 16px 16px;
+  }
+
+  /* === EIDOU DNA: BRACKET CONTAINER (v4: All 4 corners) === */
+  .eidou-bracket {
+    position: relative;
+    border: 1px dashed rgb(var(--eidou-color-border-rgb) / 0.3);
+  }
+
+  .eidou-bracket::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 100ms ease;
+    background-image:
+      linear-gradient(to right, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      linear-gradient(to right, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-dim-rgb)), rgb(var(--eidou-color-primary-dim-rgb)));
+    background-size:
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size),
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size),
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size),
+      var(--eidou-corner-size) 1px,
+      1px var(--eidou-corner-size);
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom left, bottom left,
+      bottom right, bottom right;
+    background-repeat: no-repeat;
+  }
+
+  .eidou-bracket:hover::before {
+    opacity: 1;
+    background-image:
+      linear-gradient(to right, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to right, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb)));
+  }
+
+  /* === EIDOU DNA: TACTICAL LEFT MARKER (v4: 4px) === */
+  .eidou-marker {
+    border-left: 4px solid rgb(var(--eidou-color-primary-rgb));
+    padding-left: 12px;
+  }
+
+  /* ================================================================
+     HOLOGRAPHIC SEED (RFC-004 Section 6)
+     Pre-loader capsule: 200x56px, 4-corner brackets, decode text,
+     scan line sweep, pulsing neon glow.
+     ================================================================ */
+
+  .seed-capsule {
+    position: relative;
+    width: 200px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(var(--eidou-color-bg-rgb));
+    border: 1px solid rgb(var(--eidou-color-primary-dim-rgb) / 0.6);
+    overflow: hidden;
+    font-family: var(--font-mono);
+    animation: seed-glow-pulse 2s ease-in-out infinite;
+  }
+
+  /* -- Corner Brackets (4-corner L-brackets, Eidou DNA) -- */
+  .seed-brackets {
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    background-image:
+      /* top-left */
+      linear-gradient(to right, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      /* top-right */
+      linear-gradient(to left, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      /* bottom-left */
+      linear-gradient(to right, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      /* bottom-right */
+      linear-gradient(to left, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-primary-rgb)), rgb(var(--eidou-color-primary-rgb)));
+    background-size:
+      12px 1px, 1px 12px,
+      12px 1px, 1px 12px,
+      12px 1px, 1px 12px,
+      12px 1px, 1px 12px;
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom left, bottom left,
+      bottom right, bottom right;
+    background-repeat: no-repeat;
+  }
+
+  /* -- Scan Line Sweep (horizontal left-to-right) -- */
+  .seed-scan {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(var(--eidou-color-primary-rgb) / 0.08) 45%,
+      rgb(var(--eidou-color-primary-rgb) / 0.15) 50%,
+      rgb(var(--eidou-color-primary-rgb) / 0.08) 55%,
+      transparent 100%
+    );
+    background-size: 40% 100%;
+    background-repeat: no-repeat;
+    animation: seed-scan-sweep 1.5s linear infinite;
+  }
+
+  /* -- Label Container -- */
+  .seed-label {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    color: rgb(var(--eidou-color-primary-rgb));
+    text-shadow: var(--eidou-text-glow-sm);
+    white-space: nowrap;
+  }
+
+  .seed-prefix {
+    opacity: 0.5;
+    margin-right: 2px;
+  }
+
+  .seed-text {
+    min-width: 0;
+  }
+
+  .seed-cursor {
+    opacity: 0.6;
+    animation: seed-cursor-blink 0.8s step-end infinite;
+  }
+
+  .seed-cursor-blink {
+    display: inline-block;
+    width: 6px;
+    height: 12px;
+    background: rgb(var(--eidou-color-primary-rgb));
+    margin-left: 2px;
+    animation: seed-cursor-blink 1s step-end infinite;
+  }
+
+  /* -- Seed Animations -- */
+  @keyframes seed-glow-pulse {
+    0%, 100% {
+      box-shadow:
+        0 0 4px rgb(var(--eidou-color-primary-dim-rgb) / 0.3),
+        inset 0 0 8px rgb(var(--eidou-color-primary-dim-rgb) / 0.05);
+    }
+    50% {
+      box-shadow:
+        0 0 8px rgb(var(--eidou-color-primary-rgb) / 0.4),
+        0 0 16px rgb(var(--eidou-color-primary-rgb) / 0.15),
+        inset 0 0 12px rgb(var(--eidou-color-primary-dim-rgb) / 0.1);
+    }
+  }
+
+  @keyframes seed-scan-sweep {
+    0%   { background-position: -40% 0; }
+    100% { background-position: 140% 0; }
+  }
+
+  @keyframes seed-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* -- Variant: alert (red glow) -- */
+  .seed-capsule[data-seed-variant="alert"] {
+    border-color: rgb(var(--eidou-color-danger-rgb) / 0.6);
+    animation: seed-glow-pulse-alert 1.5s ease-in-out infinite;
+  }
+
+  .seed-capsule[data-seed-variant="alert"] .seed-label {
+    color: rgb(var(--eidou-color-danger-rgb));
+  }
+
+  .seed-capsule[data-seed-variant="alert"] .seed-brackets {
+    background-image:
+      linear-gradient(to right, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb))),
+      linear-gradient(to right, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-danger-rgb)), rgb(var(--eidou-color-danger-rgb)));
+  }
+
+  @keyframes seed-glow-pulse-alert {
+    0%, 100% {
+      box-shadow: 0 0 4px rgb(var(--eidou-color-danger-rgb) / 0.3);
+    }
+    50% {
+      box-shadow:
+        0 0 8px rgb(var(--eidou-color-danger-rgb) / 0.5),
+        0 0 16px rgb(var(--eidou-color-danger-rgb) / 0.2);
+    }
+  }
+
+  /* -- Variant: success (green glow) -- */
+  .seed-capsule[data-seed-variant="success"] {
+    border-color: rgb(var(--eidou-color-success-rgb) / 0.6);
+    animation: seed-glow-pulse-success 2s ease-in-out infinite;
+  }
+
+  .seed-capsule[data-seed-variant="success"] .seed-label {
+    color: rgb(var(--eidou-color-success-rgb));
+  }
+
+  .seed-capsule[data-seed-variant="success"] .seed-brackets {
+    background-image:
+      linear-gradient(to right, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb))),
+      linear-gradient(to bottom, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb))),
+      linear-gradient(to right, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb))),
+      linear-gradient(to left, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb))),
+      linear-gradient(to top, rgb(var(--eidou-color-success-rgb)), rgb(var(--eidou-color-success-rgb)));
+  }
+
+  @keyframes seed-glow-pulse-success {
+    0%, 100% {
+      box-shadow: 0 0 4px rgb(var(--eidou-color-success-rgb) / 0.3);
+    }
+    50% {
+      box-shadow:
+        0 0 8px rgb(var(--eidou-color-success-rgb) / 0.5),
+        0 0 16px rgb(var(--eidou-color-success-rgb) / 0.2);
+    }
+  }
+
+  /* -- Variant: stealth (minimal, dim) -- */
+  .seed-capsule[data-seed-variant="stealth"] {
+    border-color: rgb(var(--eidou-color-border-rgb) / 0.2);
+    animation: none;
+    box-shadow: none;
+  }
+
+  .seed-capsule[data-seed-variant="stealth"] .seed-label {
+    color: rgb(var(--eidou-color-text-muted-rgb));
+    text-shadow: none;
+  }
+
+  .seed-capsule[data-seed-variant="stealth"] .seed-scan {
+    display: none;
+  }
+
+  .seed-capsule[data-seed-variant="stealth"] .seed-brackets {
+    opacity: 0.3;
+  }
+
+  /* -- Reduced motion: strip animations -- */
+  @media (prefers-reduced-motion: reduce) {
+    .seed-capsule {
+      animation: none !important;
+    }
+    .seed-scan {
+      animation: none !important;
+      display: none;
+    }
+    .seed-cursor,
+    .seed-cursor-blink {
+      animation: none !important;
+      opacity: 1;
+    }
+  }
+
+  /* ================================================================
+     MATERIALIZATION PHASE CSS (RFC-004 Section 12)
+     Phase-based overflow, opacity, pointer-events control.
+     Animation classes are applied dynamically by Projection.tsx
+     based on the transition variant.
+     ================================================================ */
+
+  .projection-phase-SEEDING {
+    /* Seed capsule is visible in its tiny window */
+  }
+
+  .projection-phase-MOUNTING {
+    /* Ghost render in progress -- content is invisible */
+    opacity: 0;
+    overflow: visible;
+  }
+
+  .projection-phase-SHAPING {
+    /* Transitioning from Seed/ghost size to final size.
+       Content must be in DOM for measurement but invisible to the user. */
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  /* ================================================================
+     REVEAL ANIMATIONS (RFC-004 REVEALING Phase)
+     Frame expansion from seed capsule center (200x56) outward to
+     full widget size using CSS inset property. 6 core variants.
+     Applied on the reveal wrapper during REVEALING phase.
+     ================================================================ */
+
+  .projection-phase-REVEALING {
+    overflow: hidden;
+  }
+
+  /* -- Reveal animation base: visible frame with green scan grid -- */
+  .eidou-reveal-anim {
+    position: absolute !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: hidden;
+    background:
+      linear-gradient(0deg, rgb(var(--eidou-color-primary-rgb) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--eidou-color-primary-rgb) / 0.06) 1px, transparent 1px),
+      rgb(var(--eidou-color-surface-rgb));
+    background-size: 16px 16px, 16px 16px, auto;
+    border: 1px solid rgb(var(--eidou-color-primary-dim-rgb) / 0.6);
+    box-shadow: var(--eidou-glow-sm);
+  }
+
+  /* Scan line sweep: neon bar top-to-bottom during reveal expansion */
+  .eidou-reveal-anim::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 2px;
+    background: rgb(var(--eidou-color-primary-rgb));
+    box-shadow: 0 0 8px rgb(var(--eidou-color-primary-rgb) / 0.5),
+                0 4px 12px rgb(var(--eidou-color-primary-rgb) / 0.2);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    animation: eidou-scan-sweep var(--eidou-reveal-duration, 600ms) ease-in-out forwards;
+  }
+
+  @keyframes eidou-scan-sweep {
+    0%   { top: 0;    opacity: 0; }
+    10%  { opacity: 0.8; }
+    90%  { opacity: 0.8; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  /* Hide inner content during shaping/reveal/entering -- prevent single-frame flash.
+     SHAPING: redundant (root is opacity:0) but defense-in-depth.
+     REVEALING: only the expanding frame is visible, not content.
+     ENTERING: safety net until enter animation's fill-mode:both kicks in. */
+  .projection-phase-SHAPING .projection-content,
+  .projection-phase-REVEALING .projection-content,
+  .projection-phase-ENTERING .projection-content {
+    opacity: 0;
+  }
+
+  /* -- default: two-phase expansion (H first, V second) + glow dispersal -- */
+  @keyframes eidou-reveal-default {
+    0%   { inset: calc(50% - 28px) calc(50% - 100px);
+           border-color: rgb(var(--eidou-color-primary-rgb) / 0.6);
+           box-shadow: 0 0 15px rgb(var(--eidou-color-primary-rgb) / 0.3),
+                       inset 0 0 20px rgb(var(--eidou-color-primary-rgb) / 0.08); }
+    50%  { inset: calc(50% - 28px) 0;
+           border-color: rgb(var(--eidou-color-primary-rgb) / 0.5);
+           box-shadow: 0 0 10px rgb(var(--eidou-color-primary-rgb) / 0.2); }
+    100% { inset: 0;
+           border-color: rgb(var(--eidou-color-border-rgb) / 0.3);
+           box-shadow: var(--eidou-glow-sm); }
+  }
+
+  /* -- tactical: 2-step mechanical unfold (vertical then horizontal) -- */
+  @keyframes eidou-reveal-tactical {
+    0%   { inset: calc(50% - 28px) calc(50% - 100px);
+           border-color: rgb(var(--eidou-color-primary-rgb) / 0.6);
+           box-shadow: 0 0 15px rgb(var(--eidou-color-primary-rgb) / 0.4); }
+    50%  { inset: 0 calc(50% - 100px);
+           border-color: rgb(var(--eidou-color-primary-rgb) / 0.5);
+           box-shadow: 0 0 10px rgb(var(--eidou-color-primary-rgb) / 0.2); }
+    100% { inset: 0;
+           border-color: rgb(var(--eidou-color-border-rgb) / 0.3);
+           box-shadow: var(--eidou-glow-sm); }
+  }
+
+  /* -- glitch: jittery expansion with glow flicker -- */
+  @keyframes eidou-reveal-glitch {
+    0%   { inset: calc(50% - 28px) calc(50% - 100px);
+           box-shadow: 0 0 15px rgb(var(--eidou-color-primary-rgb) / 0.4); }
+    20%  { inset: calc(50% - 40px) calc(50% - 120px);
+           box-shadow: 0 0 20px rgb(var(--eidou-color-primary-rgb) / 0.5); }
+    25%  { inset: calc(50% - 28px) calc(50% - 100px);
+           box-shadow: 0 0 15px rgb(var(--eidou-color-primary-rgb) / 0.3); }
+    50%  { inset: 20% 15%;
+           box-shadow: 0 0 10px rgb(var(--eidou-color-primary-rgb) / 0.2); }
+    55%  { inset: 25% 10%;
+           box-shadow: 0 0 12px rgb(var(--eidou-color-primary-rgb) / 0.3); }
+    75%  { inset: 5% 3%;
+           box-shadow: 0 0 6px rgb(var(--eidou-color-primary-rgb) / 0.15); }
+    100% { inset: 0;
+           box-shadow: var(--eidou-glow-sm); }
+  }
+
+  /* -- stealth: subtle expansion with blur dissolve + faint glow -- */
+  @keyframes eidou-reveal-stealth {
+    from { inset: calc(50% - 28px) calc(50% - 100px);
+           filter: blur(4px); opacity: 0;
+           box-shadow: 0 0 8px rgb(var(--eidou-color-primary-rgb) / 0.1); }
+    to   { inset: 0;
+           filter: blur(0px); opacity: 1;
+           box-shadow: none; }
+  }
+
+  /* -- alert: fast aggressive expansion with red flash -- */
+  @keyframes eidou-reveal-alert {
+    0%   { inset: calc(50% - 28px) calc(50% - 100px);
+           border-color: rgb(var(--eidou-color-danger-rgb) / 0.8);
+           box-shadow: 0 0 15px rgb(var(--eidou-color-danger-rgb) / 0.4); }
+    40%  { inset: 10% 8%;
+           border-color: rgb(var(--eidou-color-danger-rgb) / 0.6);
+           box-shadow: 0 0 20px rgb(var(--eidou-color-danger-rgb) / 0.3); }
+    100% { inset: 0;
+           border-color: rgb(var(--eidou-color-border-rgb) / 0.3);
+           box-shadow: var(--eidou-glow-sm); }
+  }
+
+  /* -- success: expansion with green glow pulse -- */
+  @keyframes eidou-reveal-success {
+    0%   { inset: calc(50% - 28px) calc(50% - 100px);
+           box-shadow: 0 0 15px rgb(var(--eidou-color-success-rgb) / 0.4); }
+    60%  { inset: 5% 3%;
+           box-shadow: 0 0 20px rgb(var(--eidou-color-success-rgb) / 0.3); }
+    100% { inset: 0;
+           box-shadow: var(--eidou-glow-sm); }
+  }
+
+  /* -- Reduced motion: skip reveal inset animation -- */
+  @media (prefers-reduced-motion: reduce) {
+    .projection-phase-REVEALING {
+      animation: none !important;
+    }
+
+    .eidou-reveal-anim {
+      animation-duration: 0.01ms !important;
+    }
+  }
+
+  .projection-phase-ENTERING {
+    overflow: hidden;
+  }
+
+  .projection-phase-IDLE {
+    opacity: 1;
+    overflow: visible;
+  }
+
+  .projection-phase-EXITING {
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* ================================================================
+     ENTER ANIMATIONS (RFC-004 Section 7.2)
+     6 core variants. Applied as CSS animation on the content
+     wrapper during ENTERING phase.
+     ================================================================ */
+
+  /* -- default: fade + subtle scale -- */
+  @keyframes eidou-enter-default {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes eidou-exit-default {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.96); }
+  }
+
+  /* -- tactical: mechanical unfold (clip-path inset) -- */
+  @keyframes eidou-enter-tactical {
+    0%   { clip-path: inset(50% 0 50% 0); opacity: 0; }
+    40%  { clip-path: inset(0 0 0 0); opacity: 0.6; }
+    100% { clip-path: inset(0 0 0 0); opacity: 1; }
+  }
+
+  @keyframes eidou-exit-tactical {
+    0%   { clip-path: inset(0 0 0 0); opacity: 1; }
+    60%  { clip-path: inset(0 0 0 0); opacity: 0.6; }
+    100% { clip-path: inset(50% 0 50% 0); opacity: 0; }
+  }
+
+  /* -- glitch: RGB split + shake -> snap -- */
+  @keyframes eidou-enter-glitch {
+    0%, 15%  { clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); transform: translateX(-4px); opacity: 0.7; }
+    16%, 35% { clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); transform: translateX(4px); opacity: 0.8; }
+    36%, 50% { clip-path: polygon(0 20%, 100% 20%, 100% 80%, 0 80%); transform: translateX(-2px); opacity: 0.9; }
+    51%, 100%{ clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes eidou-exit-glitch {
+    0%, 40%  { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: translateX(0); opacity: 1; }
+    41%, 60% { clip-path: polygon(0 20%, 100% 20%, 100% 80%, 0 80%); transform: translateX(2px); opacity: 0.8; }
+    61%, 80% { clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); transform: translateX(-4px); opacity: 0.5; }
+    81%, 100%{ clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%); transform: translateX(4px); opacity: 0; }
+  }
+
+  /* -- stealth: blur diffusion (ink bloom) -- */
+  @keyframes eidou-enter-stealth {
+    from { opacity: 0; filter: blur(8px); }
+    to   { opacity: 1; filter: blur(0px); }
+  }
+
+  @keyframes eidou-exit-stealth {
+    from { opacity: 1; filter: blur(0px); }
+    to   { opacity: 0; filter: blur(8px); }
+  }
+
+  /* -- alert: red flash + hard appear -- */
+  @keyframes eidou-enter-alert {
+    0%   { opacity: 0; box-shadow: inset 0 0 0 2px rgb(var(--eidou-color-danger-rgb)); }
+    30%  { opacity: 1; box-shadow: inset 0 0 0 2px rgb(var(--eidou-color-danger-rgb)), 0 0 20px rgb(var(--eidou-color-danger-rgb) / 0.4); }
+    60%  { box-shadow: inset 0 0 0 1px rgb(var(--eidou-color-danger-rgb) / 0.5), 0 0 8px rgb(var(--eidou-color-danger-rgb) / 0.2); }
+    100% { opacity: 1; box-shadow: none; }
+  }
+
+  @keyframes eidou-exit-alert {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  /* -- success: green pulse + scale -- */
+  @keyframes eidou-enter-success {
+    0%   { opacity: 0; transform: scale(0.92); box-shadow: 0 0 0 rgb(var(--eidou-color-success-rgb) / 0); }
+    50%  { opacity: 1; transform: scale(1.01); box-shadow: 0 0 12px rgb(var(--eidou-color-success-rgb) / 0.3); }
+    100% { transform: scale(1); box-shadow: none; }
+  }
+
+  @keyframes eidou-exit-success {
+    from { opacity: 1; }
+    to   { opacity: 0; transform: scale(0.98); }
+  }
+
+  /* -- Reduced motion: override all materialization animations -- */
+  @media (prefers-reduced-motion: reduce) {
+    .projection-phase-ENTERING,
+    .projection-phase-REVEALING,
+    .projection-phase-EXITING {
+      animation: none !important;
+    }
+
+    .eidou-enter-anim,
+    .eidou-reveal-anim,
+    .eidou-exit-anim {
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
