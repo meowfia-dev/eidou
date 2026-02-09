@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="44" height="44" fill="none">
+    <g transform="translate(2.5, 0) skewX(-10)">
+        <path d="M 6 4 L 19.5 4 A 0.5 0.5 0 0 1 20 4.5 L 20 6.5 A 0.5 0.5 0 0 1 19.5 7 L 4.5 7 A 0.5 0.5 0 0 1 4 6.5 L 4 6 Z" fill="#FFFFFF" />
+        <rect x="4" y="10" width="10" height="3" rx="0.5" fill="#FFFFFF" />
+        <rect x="4" y="16" width="16" height="3" rx="0.5" fill="#FFFFFF" />
+    </g>
+</svg>

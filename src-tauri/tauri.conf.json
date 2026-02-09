@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "eidou",
+  "version": "0.1.0",
+  "identifier": "com.eidou.host",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Eidou Host",
+        "width": 800,
+        "height": 600,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": ["'self'", "ipc:", "asset:"],
+        "script-src": ["'self'", "ipc:", "asset:", "http://localhost:1420", "http://127.0.0.1:1420"],
+        "style-src": ["'self'", "ipc:", "asset:", "http://localhost:1420", "http://127.0.0.1:1420", "'unsafe-inline'"],
+        "img-src": ["'self'", "ipc:", "asset:", "data:", "https:", "http://localhost:1420", "http://127.0.0.1:1420"],
+        "connect-src": ["'self'", "ipc:", "asset:", "http://localhost:1420", "http://127.0.0.1:1420"]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": [
+      "icons/tray-icon-Template.png",
+      "icons/tray-icon-Template@2x.png"
+    ]
+  }
+}
