@@ -1,0 +1,391 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Souta's Pokedex",
+    "size": { "ratio": "4:5", "width": 640, "maxWidth": 900, "base": "md" }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": { "contentPadding": "md" },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "POKEDEX",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "scroll",
+              "props": {},
+              "children": [
+                {
+                  "type": "col",
+                  "props": { "gap": "4" },
+                  "children": [
+                    {
+                      "type": "grid",
+                      "props": { "columns": 2, "gap": "4" },
+                      "children": [
+                        {
+                          "type": "box",
+                          "props": { "bg": "card", "bgOpacity": "40", "p": "3", "border": true, "borderColor": "primary", "borderOpacity": "20" },
+                          "children": [
+                            {
+                              "type": "col",
+                              "props": { "gap": "2" },
+                              "children": [
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "align": "center" },
+                                  "children": [
+                                    {
+                                      "type": "image",
+                                      "props": {
+                                        "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+                                        "alt": "Pikachu",
+                                        "_style": { "width": "64px", "height": "64px", "imageRendering": "pixelated" }
+                                      }
+                                    },
+                                    {
+                                      "type": "col",
+                                      "props": { "gap": "1" },
+                                      "children": [
+                                        { "type": "text", "props": { "content": "Pikachu", "variant": "h3" } },
+                                        { "type": "text", "props": { "content": "#025", "variant": "mono", "color": "muted" } },
+                                        { "type": "badge", "props": { "label": "ELECTRIC", "variant": "solid", "color": "#F5C542" } }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "col",
+                                  "props": { "gap": "1" },
+                                  "children": [
+                                    { "type": "progress", "props": { "value": 35, "max": 255, "label": "HP" } },
+                                    { "type": "progress", "props": { "value": 55, "max": 255, "label": "ATK" } },
+                                    { "type": "progress", "props": { "value": 40, "max": 255, "label": "DEF" } },
+                                    { "type": "progress", "props": { "value": 90, "max": 255, "label": "SPD" } }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "justify": "between", "align": "center" },
+                                  "children": [
+                                    { "type": "button", "props": { "label": "Select", "action": "select:025", "variant": "ghost" } },
+                                    { "type": "link", "props": { "label": "Wiki", "href": "https://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pok%C3%A9mon)" } }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "props": { "bg": "card", "bgOpacity": "40", "p": "3", "border": true, "borderColor": "primary", "borderOpacity": "20" },
+                          "children": [
+                            {
+                              "type": "col",
+                              "props": { "gap": "2" },
+                              "children": [
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "align": "center" },
+                                  "children": [
+                                    {
+                                      "type": "image",
+                                      "props": {
+                                        "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png",
+                                        "alt": "Charizard",
+                                        "_style": { "width": "64px", "height": "64px", "imageRendering": "pixelated" }
+                                      }
+                                    },
+                                    {
+                                      "type": "col",
+                                      "props": { "gap": "1" },
+                                      "children": [
+                                        { "type": "text", "props": { "content": "Charizard", "variant": "h3" } },
+                                        { "type": "text", "props": { "content": "#006", "variant": "mono", "color": "muted" } },
+                                        {
+                                          "type": "row",
+                                          "props": { "gap": "1", "_style": { "flexWrap": "wrap" } },
+                                          "children": [
+                                            { "type": "badge", "props": { "label": "FIRE", "variant": "solid", "color": "#FF6B35" } },
+                                            { "type": "badge", "props": { "label": "FLYING", "variant": "outline" } }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "col",
+                                  "props": { "gap": "1" },
+                                  "children": [
+                                    { "type": "progress", "props": { "value": 78, "max": 255, "label": "HP" } },
+                                    { "type": "progress", "props": { "value": 84, "max": 255, "label": "ATK" } },
+                                    { "type": "progress", "props": { "value": 78, "max": 255, "label": "DEF" } },
+                                    { "type": "progress", "props": { "value": 100, "max": 255, "label": "SPD" } }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "justify": "between", "align": "center" },
+                                  "children": [
+                                    { "type": "button", "props": { "label": "Select", "action": "select:006", "variant": "ghost" } },
+                                    { "type": "link", "props": { "label": "Wiki", "href": "https://bulbapedia.bulbagarden.net/wiki/Charizard_(Pok%C3%A9mon)" } }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "props": { "bg": "card", "bgOpacity": "40", "p": "3", "border": true, "borderColor": "primary", "borderOpacity": "20" },
+                          "children": [
+                            {
+                              "type": "col",
+                              "props": { "gap": "2" },
+                              "children": [
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "align": "center" },
+                                  "children": [
+                                    {
+                                      "type": "image",
+                                      "props": {
+                                        "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png",
+                                        "alt": "Gengar",
+                                        "_style": { "width": "64px", "height": "64px", "imageRendering": "pixelated" }
+                                      }
+                                    },
+                                    {
+                                      "type": "col",
+                                      "props": { "gap": "1" },
+                                      "children": [
+                                        { "type": "text", "props": { "content": "Gengar", "variant": "h3" } },
+                                        { "type": "text", "props": { "content": "#094", "variant": "mono", "color": "muted" } },
+                                        {
+                                          "type": "row",
+                                          "props": { "gap": "1", "_style": { "flexWrap": "wrap" } },
+                                          "children": [
+                                            { "type": "badge", "props": { "label": "GHOST", "variant": "outline" } },
+                                            { "type": "badge", "props": { "label": "POISON", "variant": "solid", "color": "#A855F7" } }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "col",
+                                  "props": { "gap": "1" },
+                                  "children": [
+                                    { "type": "progress", "props": { "value": 60, "max": 255, "label": "HP" } },
+                                    { "type": "progress", "props": { "value": 65, "max": 255, "label": "ATK" } },
+                                    { "type": "progress", "props": { "value": 60, "max": 255, "label": "DEF" } },
+                                    { "type": "progress", "props": { "value": 110, "max": 255, "label": "SPD" } }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "justify": "between", "align": "center" },
+                                  "children": [
+                                    { "type": "button", "props": { "label": "Select", "action": "select:094", "variant": "ghost" } },
+                                    { "type": "link", "props": { "label": "Wiki", "href": "https://bulbapedia.bulbagarden.net/wiki/Gengar_(Pok%C3%A9mon)" } }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "props": { "bg": "card", "bgOpacity": "40", "p": "3", "border": true, "borderColor": "primary", "borderOpacity": "20" },
+                          "children": [
+                            {
+                              "type": "col",
+                              "props": { "gap": "2" },
+                              "children": [
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "align": "center" },
+                                  "children": [
+                                    {
+                                      "type": "image",
+                                      "props": {
+                                        "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png",
+                                        "alt": "Eevee",
+                                        "_style": { "width": "64px", "height": "64px", "imageRendering": "pixelated" }
+                                      }
+                                    },
+                                    {
+                                      "type": "col",
+                                      "props": { "gap": "1" },
+                                      "children": [
+                                        { "type": "text", "props": { "content": "Eevee", "variant": "h3" } },
+                                        { "type": "text", "props": { "content": "#133", "variant": "mono", "color": "muted" } },
+                                        { "type": "badge", "props": { "label": "NORMAL", "variant": "ghost" } }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "col",
+                                  "props": { "gap": "1" },
+                                  "children": [
+                                    { "type": "progress", "props": { "value": 55, "max": 255, "label": "HP" } },
+                                    { "type": "progress", "props": { "value": 55, "max": 255, "label": "ATK" } },
+                                    { "type": "progress", "props": { "value": 50, "max": 255, "label": "DEF" } },
+                                    { "type": "progress", "props": { "value": 55, "max": 255, "label": "SPD" } }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "justify": "between", "align": "center" },
+                                  "children": [
+                                    { "type": "button", "props": { "label": "Select", "action": "select:133", "variant": "ghost" } },
+                                    { "type": "link", "props": { "label": "Wiki", "href": "https://bulbapedia.bulbagarden.net/wiki/Eevee_(Pok%C3%A9mon)" } }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "props": { "bg": "card", "bgOpacity": "40", "p": "3", "border": true, "borderColor": "primary", "borderOpacity": "20" },
+                          "children": [
+                            {
+                              "type": "col",
+                              "props": { "gap": "2" },
+                              "children": [
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "align": "center" },
+                                  "children": [
+                                    {
+                                      "type": "image",
+                                      "props": {
+                                        "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png",
+                                        "alt": "Mewtwo",
+                                        "_style": { "width": "64px", "height": "64px", "imageRendering": "pixelated" }
+                                      }
+                                    },
+                                    {
+                                      "type": "col",
+                                      "props": { "gap": "1" },
+                                      "children": [
+                                        { "type": "text", "props": { "content": "Mewtwo", "variant": "h3" } },
+                                        { "type": "text", "props": { "content": "#150", "variant": "mono", "color": "muted" } },
+                                        { "type": "badge", "props": { "label": "PSYCHIC", "variant": "solid", "color": "#EC4899" } }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "col",
+                                  "props": { "gap": "1" },
+                                  "children": [
+                                    { "type": "progress", "props": { "value": 106, "max": 255, "label": "HP" } },
+                                    { "type": "progress", "props": { "value": 110, "max": 255, "label": "ATK" } },
+                                    { "type": "progress", "props": { "value": 90, "max": 255, "label": "DEF" } },
+                                    { "type": "progress", "props": { "value": 130, "max": 255, "label": "SPD" } }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "justify": "between", "align": "center" },
+                                  "children": [
+                                    { "type": "button", "props": { "label": "Select", "action": "select:150", "variant": "ghost" } },
+                                    { "type": "link", "props": { "label": "Wiki", "href": "https://bulbapedia.bulbagarden.net/wiki/Mewtwo_(Pok%C3%A9mon)" } }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "props": { "bg": "card", "bgOpacity": "40", "p": "3", "border": true, "borderColor": "primary", "borderOpacity": "20" },
+                          "children": [
+                            {
+                              "type": "col",
+                              "props": { "gap": "2" },
+                              "children": [
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "align": "center" },
+                                  "children": [
+                                    {
+                                      "type": "image",
+                                      "props": {
+                                        "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/151.png",
+                                        "alt": "Mew",
+                                        "_style": { "width": "64px", "height": "64px", "imageRendering": "pixelated" }
+                                      }
+                                    },
+                                    {
+                                      "type": "col",
+                                      "props": { "gap": "1" },
+                                      "children": [
+                                        { "type": "text", "props": { "content": "Mew", "variant": "h3" } },
+                                        { "type": "text", "props": { "content": "#151", "variant": "mono", "color": "muted" } },
+                                        { "type": "badge", "props": { "label": "PSYCHIC", "variant": "solid", "color": "#EC4899" } }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "col",
+                                  "props": { "gap": "1" },
+                                  "children": [
+                                    { "type": "progress", "props": { "value": 100, "max": 255, "label": "HP" } },
+                                    { "type": "progress", "props": { "value": 100, "max": 255, "label": "ATK" } },
+                                    { "type": "progress", "props": { "value": 100, "max": 255, "label": "DEF" } },
+                                    { "type": "progress", "props": { "value": 100, "max": 255, "label": "SPD" } }
+                                  ]
+                                },
+                                { "type": "divider" },
+                                {
+                                  "type": "row",
+                                  "props": { "gap": "2", "justify": "between", "align": "center" },
+                                  "children": [
+                                    { "type": "button", "props": { "label": "Select", "action": "select:151", "variant": "ghost" } },
+                                    { "type": "link", "props": { "label": "Wiki", "href": "https://bulbapedia.bulbagarden.net/wiki/Mew_(Pok%C3%A9mon)" } }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "props": { "content": "6 creatures registered", "variant": "label", "align": "center" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Souta's Lab - Phase 2+3 Test",
+    "size": "xl"
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "Universal Props & New Atoms",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "row",
+              "props": {
+                "gap": "8",
+                "align": "start"
+              },
+                  "children": [
+                    {
+                      "type": "col",
+                      "props": {
+                        "gap": "4",
+                        "_style": { "flex": 1 }
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "props": {
+                            "content": "PHASE 2: STATES",
+                            "variant": "label",
+                            "color": "primary"
+                          }
+                        },
+                        {
+                          "type": "box",
+                          "props": {
+                            "bg": "card",
+                            "bgOpacity": "40",
+                            "p": "4",
+                            "rounded": "md",
+                            "border": true,
+                            "borderColor": "primary",
+                            "borderOpacity": "10"
+                          },
+                          "children": [
+                             {
+                               "type": "col",
+                               "props": { "gap": "4" },
+                               "children": [
+                                 {
+                                   "type": "text",
+                                   "props": { "content": "1. Loading & Disabled Buttons", "variant": "mono", "_style": { "fontSize": "10px", "opacity": 0.7 } }
+                                 },
+                                 {
+                                   "type": "row",
+                                   "props": { "gap": "2" },
+                                   "children": [
+                                     { "type": "button", "props": { "label": "Normal", "action": "btn_normal" } },
+                                     { "type": "button", "props": { "label": "Loading", "action": "btn_loading", "loading": true } },
+                                     { "type": "button", "props": { "label": "Disabled", "action": "btn_disabled", "disabled": true } }
+                                   ]
+                                 },
+                                 {
+                                   "type": "text",
+                                   "props": { "content": "2. Input Errors & Types", "variant": "mono", "_style": { "fontSize": "10px", "opacity": 0.7 } }
+                                 },
+                                 { "type": "input", "props": { "name": "err_input", "placeholder": "Error State", "error": "Invalid glitch signature detected!" } },
+                                 { "type": "input", "props": { "name": "date_input", "type": "date" } },
+                                 
+                                 {
+                                   "type": "text",
+                                   "props": { "content": "3. Avatar Status", "variant": "mono", "_style": { "fontSize": "10px", "opacity": 0.7 } }
+                                 },
+                                 {
+                                   "type": "row",
+                                   "props": { "gap": "4" },
+                                   "children": [
+                                     { "type": "avatar", "props": { "fallback": "ON", "status": "online", "size": "md" } },
+                                     { "type": "avatar", "props": { "fallback": "BS", "status": "busy", "size": "md" } },
+                                     { "type": "avatar", "props": { "fallback": "OF", "status": "offline", "size": "md" } },
+                                     { "type": "avatar", "props": { "fallback": "AW", "status": "away", "size": "md" } }
+                                   ]
+                                 }
+                               ]
+                             }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "col",
+                      "props": {
+                        "gap": "4",
+                        "_style": { "flex": 1 }
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "props": {
+                            "content": "PHASE 3: NEW ATOMS",
+                            "variant": "label",
+                            "color": "primary"
+                          }
+                        },
+                        {
+                          "type": "box",
+                          "props": {
+                            "bg": "card",
+                            "bgOpacity": "40",
+                            "p": "4",
+                            "rounded": "md",
+                            "border": true,
+                            "borderColor": "primary",
+                            "borderOpacity": "10"
+                          },
+                          "children": [
+                             {
+                               "type": "col",
+                               "props": { "gap": "4" },
+                               "children": [
+                                 {
+                                   "type": "text",
+                                   "props": { "content": "1. External Link", "variant": "mono", "_style": { "fontSize": "10px", "opacity": 0.7 } }
+                                 },
+                                 { "type": "link", "props": { "label": ">> Open Tauri Docs (External)", "href": "https://tauri.app" } },
+                                 
+                                 {
+                                   "type": "text",
+                                   "props": { "content": "2. Markdown Renderer", "variant": "mono", "_style": { "fontSize": "10px", "opacity": 0.7 } }
+                                 },
+                                 { "type": "markdown", "props": { "content": "### System Status\n- Core: **Online**\n- Shield: `Active`\n\n> \"The ghost remains.\"" } },
+                                 
+                                 {
+                                   "type": "text",
+                                   "props": { "content": "3. Terminal (ANSI)", "variant": "mono", "_style": { "fontSize": "10px", "opacity": 0.7 } }
+                                 },
+                                 { 
+                                   "type": "terminal", 
+                                   "props": { 
+                                     "lines": [
+                                       "\u001b[32m[INFO]\u001b[0m Booting Eidou Core...",
+                                       "\u001b[34m[NET]\u001b[0m Connecting to ghost field...",
+                                       "\u001b[33m[WARN]\u001b[0m Weak signal detected.",
+                                       "\u001b[31m[ERR]\u001b[0m Connection reset by peer.",
+                                       "[SYST] Retrying..."
+                                     ], 
+                                     "_style": { "height": "120px" } 
+                                   } 
+                                 }
+                               ]
+                             }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

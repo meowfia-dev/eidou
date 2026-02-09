@@ -1,0 +1,121 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Strawberry OS",
+    "size": {
+      "width": 400,
+      "height": 420
+    },
+    "theme": {
+      "mode": "light",
+      "colors": {
+        "bg": "#FFF0F5",
+        "surface": "#FFE4E1",
+        "text": "#8B008B",
+        "primary": "#FF1493",
+        "border": "#FF69B4"
+      },
+      "radii": {
+        "base": "12px"
+      }
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "contentPadding": "lg",
+        "align": "center"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "Love Letter",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "col",
+              "props": {
+                "align": "center",
+                "gap": "4"
+              },
+              "children": [
+                {
+                  "type": "icon",
+                  "props": {
+                    "name": "heart",
+                    "size": 48,
+                    "color": "#FF1493"
+                  }
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "content": "Souta loves Strawberries!",
+                    "variant": "h2",
+                    "color": "primary",
+                    "glow": true
+                  }
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "content": "This widget uses a custom 'Strawberry Theme' injected via the EUIP Protocol. Notice the pink glow and rounded corners!",
+                    "variant": "body",
+                    "_style": {
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "row",
+                  "props": {
+                    "gap": "2"
+                  },
+                  "children": [
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "Spawn Clone",
+                        "action": "spawn_clone",
+                        "variant": "primary"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "Close",
+                        "action": "close_self",
+                        "variant": "secondary"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "pinned",
+              "props": {
+                "bottom": "8px",
+                "right": "8px"
+              },
+              "children": [
+                {
+                  "type": "icon",
+                  "props": {
+                    "name": "heart",
+                    "size": 16,
+                    "color": "primary"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

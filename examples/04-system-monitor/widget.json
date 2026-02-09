@@ -1,0 +1,418 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "System Monitor",
+    "size": {
+      "width": 480,
+      "height": 620
+    },
+    "position": {
+      "anchor": "center"
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "safeArea": true,
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "TACTICAL MONITOR",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "col",
+              "props": {
+                "gap": "4",
+                "align": "stretch"
+              },
+              "children": [
+                {
+                  "type": "row",
+                  "props": {
+                    "align": "center",
+                    "justify": "between"
+                  },
+                  "children": [
+                    {
+                      "type": "box",
+                      "props": {
+                        "bg": "primary",
+                        "bgOpacity": "10",
+                        "p": "2",
+                        "border": true,
+                        "borderColor": "primary",
+                        "borderOpacity": "20"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "props": {
+                                "content": "00:00:00",
+                                "variant": "mono",
+                                "weight": "bold"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "spacer",
+                      "props": {
+                        "size": "md"
+                      }
+                    },
+                    {
+                      "type": "badge",
+                      "props": {
+                        "label": "LIVE",
+                        "variant": "solid",
+                        "color": "#FF4444"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "divider",
+                  "props": {
+                    "direction": "horizontal"
+                  }
+                },
+                {
+                  "type": "grid",
+                  "props": {
+                    "columns": 2,
+                    "gap": "4"
+                  },
+                  "children": [
+                    {
+                      "type": "box",
+                      "props": {
+                        "bg": "card",
+                        "bgOpacity": "40",
+                        "p": "3",
+                        "border": true,
+                        "borderColor": "primary",
+                        "borderOpacity": "20"
+                      },
+                      "children": [
+                        {
+                          "type": "col",
+                          "props": {
+                            "gap": "2"
+                          },
+                          "children": [
+                            {
+                              "type": "row",
+                              "props": {
+                                "gap": "2",
+                                "align": "center"
+                              },
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "carbon:chip",
+                                    "size": 20
+                                  }
+                                },
+                                {
+                                  "type": "text",
+                                  "props": {
+                                    "content": "CPU",
+                                    "variant": "label"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "progress",
+                              "props": {
+                                "value": 45,
+                                "max": 100,
+                                "label": "45%"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "props": {
+                        "bg": "card",
+                        "bgOpacity": "40",
+                        "p": "3",
+                        "border": true,
+                        "borderColor": "info",
+                        "borderOpacity": "20"
+                      },
+                      "children": [
+                        {
+                          "type": "col",
+                          "props": {
+                            "gap": "2"
+                          },
+                          "children": [
+                            {
+                              "type": "row",
+                              "props": {
+                                "gap": "2",
+                                "align": "center"
+                              },
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "carbon:dashboard",
+                                    "size": 20
+                                  }
+                                },
+                                {
+                                  "type": "text",
+                                  "props": {
+                                    "content": "RAM",
+                                    "variant": "label"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "progress",
+                              "props": {
+                                "value": 60,
+                                "max": 100,
+                                "label": "60%"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "props": {
+                    "bg": "card",
+                    "bgOpacity": "40",
+                    "p": "3",
+                    "border": true,
+                    "borderColor": "warning",
+                    "borderOpacity": "20"
+                  },
+                  "children": [
+                    {
+                      "type": "col",
+                      "props": {
+                        "gap": "2"
+                      },
+                      "children": [
+                        {
+                          "type": "row",
+                          "props": {
+                            "gap": "2",
+                            "align": "center"
+                          },
+                          "children": [
+                            {
+                              "type": "icon",
+                              "props": {
+                                "name": "carbon:power",
+                                "size": 20
+                              }
+                            },
+                            {
+                              "type": "text",
+                              "props": {
+                                "content": "DISK IO",
+                                "variant": "label"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "progress",
+                          "props": {
+                                "value": 62,
+                                "max": 100,
+                                "label": "62%"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "props": {
+                    "bg": "card",
+                    "bgOpacity": "20",
+                    "p": "3"
+                  },
+                  "children": [
+                    {
+                      "type": "row",
+                      "props": {
+                        "align": "center",
+                        "gap": "4"
+                      },
+                      "children": [
+                        {
+                          "type": "avatar",
+                          "props": {
+                            "fallback": "SV",
+                            "status": "online",
+                            "size": "md"
+                          }
+                        },
+                        {
+                          "type": "col",
+                          "props": {},
+                          "children": [
+                            {
+                              "type": "text",
+                              "props": {
+                                "content": "SERVER-04",
+                                "variant": "body",
+                                "weight": "bold"
+                              }
+                            },
+                            {
+                              "type": "tooltip",
+                              "props": {
+                                "content": "Connection Verified"
+                              },
+                              "children": [
+                                {
+                                  "type": "row",
+                                  "props": {
+                                    "gap": "1",
+                                    "align": "center"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "props": {
+                                        "name": "carbon:checkmark",
+                                        "size": 16
+                                      }
+                                    },
+                                    {
+                                      "type": "text",
+                                      "props": {
+                                        "content": "Secure",
+                                        "variant": "label",
+                                        "color": "muted"
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "spacer",
+                          "props": {
+                            "size": "sm"
+                          }
+                        },
+                        {
+                          "type": "col",
+                          "props": {
+                            "gap": "1",
+                            "_style": {
+                              "flex": 1
+                            }
+                          },
+                          "children": [
+                            {
+                                "type": "skeleton",
+                                "props": {
+                                  "variant": "pulse",
+                                  "width": "100%",
+                                  "height": "10px"
+                                }
+                            },
+                            {
+                                "type": "skeleton",
+                                "props": {
+                                  "variant": "pulse",
+                                  "width": "60%",
+                                  "height": "10px"
+                                }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "terminal",
+                  "props": {
+                    "lines": [
+                      "\u001b[32m[INFO]\u001b[0m System initialization sequence started...",
+                      "\u001b[34m[NET]\u001b[0m Establishing secure handshake...",
+                      "\u001b[33m[WARN]\u001b[0m Latency compensation active."
+                    ],
+                    "style": {
+                      "height": "120px"
+                    }
+                  }
+                },
+                {
+                  "type": "divider",
+                  "props": {
+                    "direction": "horizontal"
+                  }
+                },
+                {
+                  "type": "row",
+                  "props": {
+                    "align": "center",
+                    "gap": "3"
+                  },
+                  "children": [
+                    {
+                      "type": "spinner",
+                      "props": {
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "props": {
+                        "content": "Monitoring active...",
+                        "variant": "label",
+                        "color": "muted"
+                      }
+                    },
+                    {
+                      "type": "spacer",
+                      "props": {
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "markdown",
+                      "props": {
+                        "content": "**Eidou** v0.1.1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

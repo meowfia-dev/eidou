@@ -1,0 +1,66 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Hello World",
+    "size": "sm",
+    "position": {
+      "anchor": "center",
+      "offset": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "transition": {
+      "variant": "default",
+      "speed": "normal"
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "safeArea": true,
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "GREETINGS",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "col",
+              "props": {
+                "align": "center",
+                "justify": "center",
+                "gap": "4",
+                "_style": {
+                  "height": "100%"
+                }
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "props": {
+                    "content": "HELLO WORLD",
+                    "variant": "h1"
+                  }
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "content": "Project Eidou is Online.",
+                    "variant": "mono"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

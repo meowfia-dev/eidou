@@ -1,0 +1,200 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Carbon Arsenal",
+    "size": {
+      "width": 520,
+      "height": 640
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "CARBON ARSENAL",
+            "variant": "glass"
+          },
+          "children": [
+            {
+              "type": "scroll",
+              "props": {},
+              "children": [
+                {
+                  "type": "col",
+                  "props": {
+                    "gap": "4"
+                  },
+                  "children": [
+                    {
+                      "type": "badge",
+                      "props": {
+                        "label": "SYSTEM",
+                        "variant": "outline"
+                      }
+                    },
+                    {
+                      "type": "grid",
+                      "props": {
+                        "columns": 5,
+                        "gap": "3"
+                      },
+                      "children": [
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:terminal", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "terminal", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:chip", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "chip", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:network-4", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "network-4", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:dashboard", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "dashboard", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:power", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "power", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:settings", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "settings", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:activity", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "activity", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:data-1", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "data-1", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:code", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "code", "variant": "label", "color": "muted" } }] }
+                      ]
+                    },
+                    {
+                      "type": "divider",
+                      "props": {
+                        "direction": "horizontal"
+                      }
+                    },
+                    {
+                      "type": "badge",
+                      "props": {
+                        "label": "SECURITY",
+                        "variant": "outline"
+                      }
+                    },
+                    {
+                      "type": "grid",
+                      "props": {
+                        "columns": 3,
+                        "gap": "3"
+                      },
+                      "children": [
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:security", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "security", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:locked", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "locked", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:unlocked", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "unlocked", "variant": "label", "color": "muted" } }] }
+                      ]
+                    },
+                    {
+                      "type": "divider",
+                      "props": {
+                        "direction": "horizontal"
+                      }
+                    },
+                    {
+                      "type": "badge",
+                      "props": {
+                        "label": "FILES",
+                        "variant": "outline"
+                      }
+                    },
+                    {
+                      "type": "grid",
+                      "props": {
+                        "columns": 2,
+                        "gap": "3"
+                      },
+                      "children": [
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:document", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "document", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:folder", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "folder", "variant": "label", "color": "muted" } }] }
+                      ]
+                    },
+                    {
+                      "type": "divider",
+                      "props": {
+                        "direction": "horizontal"
+                      }
+                    },
+                    {
+                      "type": "badge",
+                      "props": {
+                        "label": "STATUS",
+                        "variant": "outline"
+                      }
+                    },
+                    {
+                      "type": "grid",
+                      "props": {
+                        "columns": 4,
+                        "gap": "3"
+                      },
+                      "children": [
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:warning", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "warning", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:error", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "error", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:checkmark", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "checkmark", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:information", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "information", "variant": "label", "color": "muted" } }] }
+                      ]
+                    },
+                    {
+                      "type": "divider",
+                      "props": {
+                        "direction": "horizontal"
+                      }
+                    },
+                    {
+                      "type": "badge",
+                      "props": {
+                        "label": "ACTIONS",
+                        "variant": "outline"
+                      }
+                    },
+                    {
+                      "type": "grid",
+                      "props": {
+                        "columns": 5,
+                        "gap": "3"
+                      },
+                      "children": [
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:close", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "close", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:add", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "add", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:subtract", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "subtract", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:copy", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "copy", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:download", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "download", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:upload", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "upload", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:search", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "search", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:filter", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "filter", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:share", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "share", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:restart", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "restart", "variant": "label", "color": "muted" } }] }
+                      ]
+                    },
+                    {
+                      "type": "divider",
+                      "props": {
+                        "direction": "horizontal"
+                      }
+                    },
+                    {
+                      "type": "badge",
+                      "props": {
+                        "label": "NAVIGATION",
+                        "variant": "outline"
+                      }
+                    },
+                    {
+                      "type": "grid",
+                      "props": {
+                        "columns": 3,
+                        "gap": "3"
+                      },
+                      "children": [
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:chevron-right", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "chevron-right", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:chevron-down", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "chevron-down", "variant": "label", "color": "muted" } }] },
+                        { "type": "col", "props": { "align": "center", "gap": "2", "_style": { "padding": "8px" } }, "children": [{ "type": "icon", "props": { "name": "carbon:overflow-menu-vertical", "size": 24, "color": "primary" } }, { "type": "text", "props": { "content": "overflow-menu-vertical", "variant": "label", "color": "muted" } }] }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,348 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Mission Briefing",
+    "size": {
+      "width": 480,
+      "height": 600
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "MISSION BRIEFING",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "scroll",
+              "props": {},
+              "children": [
+                {
+                  "type": "col",
+                  "props": {
+                    "gap": "4"
+                  },
+              "children": [
+                {
+                  "type": "text",
+                  "props": {
+                    "variant": "label",
+                    "color": "primary",
+                    "content": "AGENT PROFILE"
+                  }
+                },
+                {
+                  "type": "row",
+                  "props": {
+                    "gap": "4",
+                    "align": "center"
+                  },
+                  "children": [
+                    {
+                      "type": "avatar",
+                      "props": {
+                        "fallback": "ST",
+                        "status": "online",
+                        "size": "lg"
+                      }
+                    },
+                    {
+                      "type": "col",
+                      "props": {
+                        "gap": "2",
+                        "_style": {
+                          "flex": 1
+                        }
+                      },
+                      "children": [
+                        {
+                          "type": "input",
+                          "props": {
+                            "name": "codename",
+                            "placeholder": "Agent Codename",
+                            "label": "Codename"
+                          }
+                        },
+                        {
+                          "type": "input",
+                          "props": {
+                            "name": "mission_date",
+                            "type": "date",
+                            "label": "Date"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "divider",
+                  "props": {}
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "variant": "label",
+                    "color": "primary",
+                    "content": "MISSION PARAMETERS"
+                  }
+                },
+                {
+                  "type": "select",
+                  "props": {
+                    "name": "operation",
+                    "placeholder": "Select Operation Type",
+                    "options": [
+                      {
+                        "label": "Reconnaissance",
+                        "value": "recon"
+                      },
+                      {
+                        "label": "Extraction",
+                        "value": "extract"
+                      },
+                      {
+                        "label": "Sabotage",
+                        "value": "sabotage"
+                      },
+                      {
+                        "label": "Infiltration",
+                        "value": "infil"
+                      },
+                      {
+                        "label": "Defense",
+                        "value": "defense"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "radiogroup",
+                  "props": {
+                    "name": "team",
+                    "defaultValue": "alpha",
+                    "options": [
+                      {
+                        "label": "Alpha",
+                        "value": "alpha"
+                      },
+                      {
+                        "label": "Bravo",
+                        "value": "bravo"
+                      },
+                      {
+                        "label": "Charlie",
+                        "value": "charlie"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "divider",
+                  "props": {}
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "variant": "label",
+                    "color": "primary",
+                    "content": "EQUIPMENT LOADOUT"
+                  }
+                },
+                {
+                  "type": "col",
+                  "props": {
+                    "gap": "1"
+                  },
+                  "children": [
+                    {
+                      "type": "checkbox",
+                      "props": {
+                        "name": "eq_nightvision",
+                        "label": "Night Vision Goggles"
+                      }
+                    },
+                    {
+                      "type": "checkbox",
+                      "props": {
+                        "name": "eq_comms",
+                        "label": "Encrypted Comms Unit"
+                      }
+                    },
+                    {
+                      "type": "checkbox",
+                      "props": {
+                        "name": "eq_medkit",
+                        "label": "Field Medkit"
+                      }
+                    },
+                    {
+                      "type": "checkbox",
+                      "props": {
+                        "name": "eq_tools",
+                        "label": "Tactical Toolkit"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "divider",
+                  "props": {}
+                },
+                {
+                  "type": "row",
+                  "props": {
+                    "gap": "2",
+                    "align": "center"
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "props": {
+                        "name": "carbon:security",
+                        "size": 20,
+                        "color": "primary"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "props": {
+                        "variant": "label",
+                        "color": "primary",
+                        "content": "THREAT ASSESSMENT"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "slider",
+                  "props": {
+                    "name": "threat_level",
+                    "min": 0,
+                    "max": 10,
+                    "step": 1,
+                    "value": 5,
+                    "label": "Threat Level"
+                  }
+                },
+                {
+                  "type": "divider",
+                  "props": {}
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "variant": "label",
+                    "color": "primary",
+                    "content": "OPTIONS"
+                  }
+                },
+                {
+                  "type": "row",
+                  "props": {
+                    "gap": "6"
+                  },
+                  "children": [
+                    {
+                      "type": "switch",
+                      "props": {
+                        "name": "stealth",
+                        "label": "Stealth Mode"
+                      }
+                    },
+                    {
+                      "type": "switch",
+                      "props": {
+                        "name": "radio_silence",
+                        "label": "Radio Silence"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "divider",
+                  "props": {}
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "variant": "label",
+                    "color": "primary",
+                    "content": "MISSION NOTES"
+                  }
+                },
+                {
+                  "type": "textarea",
+                  "props": {
+                    "name": "notes",
+                    "placeholder": "Additional mission notes...",
+                    "rows": 3
+                  }
+                },
+                {
+                  "type": "codeeditor",
+                  "props": {
+                    "name": "encrypted_payload",
+                    "language": "json",
+                    "defaultValue": "{\n  \"key\": \"CLASSIFIED\"\n}",
+                    "_style": {
+                      "height": "80px"
+                    }
+                  }
+                },
+                {
+                  "type": "divider",
+                  "props": {}
+                },
+                {
+                  "type": "text",
+                  "props": {
+                    "variant": "label",
+                    "color": "primary",
+                    "content": "ACTIONS"
+                  }
+                },
+                {
+                  "type": "row",
+                  "props": {
+                    "gap": "4",
+                    "justify": "end"
+                  },
+                  "children": [
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "CANCEL",
+                        "action": "cancel",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "SUBMIT BRIEFING",
+                        "action": "submit",
+                        "variant": "primary"
+                      }
+                    }
+                  ]
+                }
+               ]
+              }
+            ]
+          }
+          ]
+        }
+      ]
+    }
+  ]
+}

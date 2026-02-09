@@ -1,0 +1,243 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Neon Calc",
+    "size": {
+      "width": 320,
+      "height": 420
+    },
+    "position": {
+      "anchor": "center",
+      "offset": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "safeArea": true,
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "NEON CALC",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "col",
+              "props": {
+                "gap": "4",
+                "_style": {
+                  "height": "100%"
+                }
+              },
+              "children": [
+                {
+                  "type": "row",
+                  "props": {
+                    "align": "center",
+                    "justify": "end",
+                    "p": "3",
+                    "rounded": "sm",
+                    "_style": {
+                      "backgroundColor": "#000000",
+                      "border": "1px solid #333",
+                      "minHeight": "80px",
+                      "width": "100%",
+                      "overflow": "hidden"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "props": {
+                        "content": "0",
+                        "variant": "mono",
+                        "size": "3xl",
+                        "weight": "bold",
+                        "color": "primary",
+                        "glow": true,
+                        "_style": {
+                          "whiteSpace": "nowrap"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "grid",
+                  "props": {
+                    "columns": 4,
+                    "gap": "2",
+                    "_style": {
+                      "flex": "1"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "C",
+                        "action": "calc:clear",
+                        "variant": "danger"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "/",
+                        "action": "calc:/",
+                        "variant": "secondary"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "*",
+                        "action": "calc:*",
+                        "variant": "secondary"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "<",
+                        "action": "calc:back",
+                        "variant": "secondary"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "7",
+                        "action": "calc:7",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "8",
+                        "action": "calc:8",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "9",
+                        "action": "calc:9",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "-",
+                        "action": "calc:-",
+                        "variant": "secondary"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "4",
+                        "action": "calc:4",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "5",
+                        "action": "calc:5",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "6",
+                        "action": "calc:6",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "+",
+                        "action": "calc:+",
+                        "variant": "secondary"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "1",
+                        "action": "calc:1",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "2",
+                        "action": "calc:2",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "3",
+                        "action": "calc:3",
+                        "variant": "ghost"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "=",
+                        "action": "calc:=",
+                        "variant": "primary",
+                        "style": {
+                          "gridRow": "span 2"
+                        }
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": "0",
+                        "action": "calc:0",
+                        "variant": "ghost",
+                        "style": {
+                          "gridColumn": "span 2"
+                        }
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "props": {
+                        "label": ".",
+                        "action": "calc:.",
+                        "variant": "ghost"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
