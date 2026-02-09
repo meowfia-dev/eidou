@@ -1,0 +1,15 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+        "eidou": {
+            "type": "local",
+            "command": [
+                "./src-tauri/target/release/eidou"
+            ],
+            "enabled": true,
+            "environment": {
+                "EIDOU_POOL_SIZE": "1"
+            }
+        }
+    }
+}
