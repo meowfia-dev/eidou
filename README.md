@@ -1,4 +1,6 @@
 <div align="center">
+  <strong>English</strong> | <a href="README.zh-TW.md">繁體中文</a>
+  <br><br>
   <img src="src-tauri/icons/app-icon.svg" width="120" alt="Eidou" />
   <h1>Eidou</h1>
   <p><strong>Desktop UI for AI Agents, via MCP.</strong></p>
@@ -11,8 +13,6 @@
   
   <img src="docs/assets/demo.png" alt="Eidou Demo" style="max-width: 100%; border-radius: 8px; margin-top: 16px;" />
 </div>
-
-> [繁體中文](README.zh-TW.md) | [English](README.md)
 
 > Your AI agent has a brain. Eidou gives it a body.
 > Send JSON. Get native desktop widgets. Collect user input. That's it.

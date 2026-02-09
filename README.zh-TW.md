@@ -1,4 +1,6 @@
 <div align="center">
+  <a href="README.md">English</a> | <strong>繁體中文</strong>
+  <br><br>
   <img src="src-tauri/icons/app-icon.svg" width="120" alt="Eidou" />
   <h1>Eidou</h1>
   <p><strong>透過 MCP，為 AI Agents 打造桌面 UI。</strong></p>
@@ -11,8 +13,6 @@
   
   <img src="docs/assets/demo.png" alt="Eidou Demo" style="max-width: 100%; border-radius: 8px; margin-top: 16px;" />
 </div>
-
-> [繁體中文](README.zh-TW.md) | [English](README.md)
 
 > 你的 AI Agent 擁有大腦。Eidou 賦予它軀體。
 > 傳送 JSON。取得原生桌面 Widgets。收集使用者輸入。就這麼簡單。
