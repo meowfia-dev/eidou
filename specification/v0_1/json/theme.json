@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://eidou.com/theme.json",
+  "title": "EUIP Theme Specification",
+  "$defs": {
+    "theme": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["dark", "light"]
+        },
+        "colors": {
+          "type": "object",
+          "properties": {
+            "bg": { "type": "string" },
+            "surface": { "type": "string" },
+            "text": { "type": "string" },
+            "primary": { "type": "string" },
+            "border": { "type": "string" }
+          }
+        },
+        "radii": {
+          "type": "object",
+          "properties": {
+            "base": { "type": "string" }
+          }
+        },
+        "tokens": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "string", "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$" },
+            "bg": { "type": "string", "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$" },
+            "text": { "type": "string", "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$" },
+            "radius": { "type": "string" },
+            "border": { "type": "string" }
+          },
+          "required": ["primary", "bg", "text", "radius"]
+        },
+        "transitions": {
+          "type": "object",
+          "description": "Transition definitions keyed by variant name. Overrides core animation timing and Seed label pools (RFC-004 Section 9.1).",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "seed_labels": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Custom Seed label pool for this variant."
+              },
+              "enter": {
+                "type": "object",
+                "properties": {
+                  "duration": { "type": "number", "description": "Enter animation duration in ms." }
+                }
+              },
+              "exit": {
+                "type": "object",
+                "properties": {
+                  "duration": { "type": "number", "description": "Exit animation duration in ms." }
+                }
+              },
+              "reveal": {
+                "type": "object",
+                "properties": {
+                  "duration": { "type": "number", "description": "Reveal (clip-path expansion) animation duration in ms." }
+                }
+              }
+            }
+          }
+        }
+      },
+      "anyOf": [
+        { "required": ["mode"] },
+        { "required": ["colors"] },
+        { "required": ["radii"] },
+        { "required": ["tokens"] },
+        { "required": ["transitions"] }
+      ]
+    }
+  }
+}

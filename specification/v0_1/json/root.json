@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://eidou.com/root.json",
+  "title": "EUIP Root Projection",
+  "type": "object",
+  "properties": {
+    "type": { "const": "projection" },
+    "props": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "className": { "type": "string" },
+        "size": {
+          "oneOf": [
+            { "type": "string", "enum": ["sm", "md", "lg", "xl", "full", "auto"] },
+            { 
+              "type": "object", 
+              "properties": { "width": { "type": "number" }, "height": { "type": "number" } },
+              "required": ["width", "height"]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ratio": {
+                  "type": "string",
+                  "pattern": "^[1-9]\\d*:[1-9]\\d*$"
+                },
+                "width": { "type": "number", "minimum": 1 },
+                "maxWidth": { "type": "number", "minimum": 1 },
+                "base": { "type": "string", "enum": ["sm", "md", "lg", "xl"] }
+              },
+              "required": ["ratio"]
+            }
+          ]
+        },
+        "position": {
+          "type": "object",
+          "properties": {
+            "anchor": { "type": "string", "enum": ["center", "top-right", "bottom-right", "top-left", "bottom-left", "custom"] },
+            "offset": { 
+              "type": "object", 
+              "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+            }
+          },
+          "required": ["anchor"]
+        },
+        "theme": { "$ref": "theme.json#/$defs/theme" },
+        "transition": {
+          "type": "object",
+          "description": "Materialization transition configuration (RFC-004 Section 8.2)",
+          "properties": {
+            "variant": {
+              "type": "string",
+              "default": "default",
+              "description": "Semantic animation token. Core tokens: default, tactical, glitch, stealth, alert, success. Themes may define additional tokens. Unknown tokens fall back to default."
+            },
+            "speed": {
+              "type": "string",
+              "enum": ["fast", "normal", "slow"],
+              "default": "normal",
+              "description": "Animation speed preset."
+            },
+            "seed": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to show the Holographic Seed pre-loader. Set false for instant (but still shadow-rendered) appearance."
+            }
+          }
+        }
+      }
+    },
+    "children": { 
+      "type": "array",
+      "items": { "$ref": "components.json#/$defs/field" },
+      "minItems": 1,
+      "maxItems": 1,
+      "description": "Projection MUST have exactly one Field child (OS adaptation layer)"
+    }
+  },
+  "required": ["type", "props", "children"]
+}

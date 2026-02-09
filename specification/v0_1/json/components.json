@@ -1,0 +1,969 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://eidou.com/components.json",
+  "$comment": "EUIP Component Library v0.1 - Strict Hierarchy Enforcement",
+  "title": "EUIP Component Library",
+  "$defs": {
+    "style": {
+      "type": "object",
+      "additionalProperties": { "type": ["string", "number"] }
+    },
+
+    "atomComponent": {
+      "$comment": "Leaf components that do not have children (or have special children like tooltip)",
+      "discriminator": { "propertyName": "type" },
+      "oneOf": [
+        { "$ref": "#/$defs/text" },
+        { "$ref": "#/$defs/button" },
+        { "$ref": "#/$defs/input" },
+        { "$ref": "#/$defs/switch" },
+        { "$ref": "#/$defs/select" },
+        { "$ref": "#/$defs/image" },
+        { "$ref": "#/$defs/icon" },
+        { "$ref": "#/$defs/spacer" },
+        { "$ref": "#/$defs/divider" },
+        { "$ref": "#/$defs/slider" },
+        { "$ref": "#/$defs/checkbox" },
+        { "$ref": "#/$defs/radiogroup" },
+        { "$ref": "#/$defs/badge" },
+        { "$ref": "#/$defs/codeeditor" },
+        { "$ref": "#/$defs/skeleton" },
+        { "$ref": "#/$defs/progress" },
+        { "$ref": "#/$defs/tooltip" },
+        { "$ref": "#/$defs/toast" },
+        { "$ref": "#/$defs/avatar" },
+        { "$ref": "#/$defs/textarea" },
+        { "$ref": "#/$defs/spinner" },
+        { "$ref": "#/$defs/link" },
+        { "$ref": "#/$defs/markdown" },
+        { "$ref": "#/$defs/terminal" }
+      ]
+    },
+
+    "layoutComponent": {
+      "$comment": "Layout containers that can hold other layouts or atoms (but NOT field/shard)",
+      "discriminator": { "propertyName": "type" },
+      "oneOf": [
+        { "$ref": "#/$defs/row" },
+        { "$ref": "#/$defs/col" },
+        { "$ref": "#/$defs/stack" },
+        { "$ref": "#/$defs/grid" },
+        { "$ref": "#/$defs/box" },
+        { "$ref": "#/$defs/pinned" },
+        { "$ref": "#/$defs/zstack" },
+        { "$ref": "#/$defs/scroll" }
+      ]
+    },
+
+    "layoutChildren": {
+      "$comment": "Children allowed inside layout components: other layouts + atoms (NO field, NO shard)",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/layoutComponent" },
+          { "$ref": "#/$defs/atomComponent" }
+        ]
+      }
+    },
+
+    "shardChildren": {
+      "$comment": "Children allowed inside shard: layouts + atoms (NO field, NO nested shard)",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/layoutComponent" },
+          { "$ref": "#/$defs/atomComponent" }
+        ]
+      }
+    },
+
+    "fieldChildren": {
+      "$comment": "Children allowed inside field: shard OR layouts OR atoms (NO nested field)",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/shard" },
+          { "$ref": "#/$defs/layoutComponent" },
+          { "$ref": "#/$defs/atomComponent" }
+        ]
+      }
+    },
+
+    "field": {
+      "$comment": "OS adaptation layer - MUST be direct child of projection, CANNOT be nested",
+      "type": "object",
+      "properties": {
+        "type": { "const": "field" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "safeArea": { "type": "boolean" },
+            "contentPadding": { "enum": ["sm", "md", "lg"] },
+            "overflow": { "enum": ["scroll", "clip", "visible"] },
+            "maxInlineSize": { "type": ["number", "string"] },
+            "align": { "enum": ["center", "start", "end", "stretch"] }
+          },
+          "additionalProperties": false
+        },
+        "children": { "$ref": "#/$defs/fieldChildren" }
+      },
+      "required": ["type", "props"]
+    },
+
+    "shard": {
+      "$comment": "Visual container with glass effect - Rule of One: max 1 per projection, NO nesting. If you need multiple visual sections inside a shard, use box with border/bg props instead of nested shards.",
+      "type": "object",
+      "properties": {
+        "type": { "const": "shard" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "closable": { "type": "boolean" },
+            "variant": { "enum": ["glass", "solid", "ghost"] },
+            "draggable": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "children": { "$ref": "#/$defs/shardChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "row": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "row" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "gap": { "$ref": "tokens.json#/$defs/gapToken" },
+            "align": { "$ref": "tokens.json#/$defs/alignToken" },
+            "justify": { "$ref": "tokens.json#/$defs/justifyToken" },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "col": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "col" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "gap": { "$ref": "tokens.json#/$defs/gapToken" },
+            "align": { "$ref": "tokens.json#/$defs/alignToken" },
+            "justify": { "$ref": "tokens.json#/$defs/justifyToken" },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "stack": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "stack" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "fit": { "type": "boolean" },
+            "align": { "enum": ["center", "top-left", "top-right", "bottom-left", "bottom-right", "top", "bottom", "left", "right"] },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "grid": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "grid" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "columns": { "type": "number" },
+            "minItemWidth": { "type": ["string", "number"] },
+            "gap": { "$ref": "tokens.json#/$defs/gapToken" },
+            "align": { "$ref": "tokens.json#/$defs/alignToken" },
+            "justify": { "$ref": "tokens.json#/$defs/justifyToken" },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "box": {
+      "$comment": "Generic styled container with optional title (rendered as bracket-frame header). NOT absolute-positioned; use 'pinned' for absolute positioning. Good for grouping content with borders/backgrounds.",
+      "type": "object",
+      "properties": {
+        "type": { "const": "box" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "width": { "type": ["string", "number"] },
+            "height": { "type": ["string", "number"] },
+            "title": { "type": "string" },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type"]
+    },
+
+    "pinned": {
+      "$comment": "Absolute-positioned container. Use explicit top/left/right/bottom props for positioning. Does NOT accept a 'position' preset string - each edge is set individually.",
+      "type": "object",
+      "properties": {
+        "type": { "const": "pinned" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "top": { "type": ["string", "number"] },
+            "left": { "type": ["string", "number"] },
+            "right": { "type": ["string", "number"] },
+            "bottom": { "type": ["string", "number"] },
+            "width": { "type": ["string", "number"] },
+            "height": { "type": ["string", "number"] },
+            "zIndex": { "type": "number" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "title": { "type": "string" },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type"]
+    },
+
+    "zstack": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "zstack" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "align": { "enum": ["center", "top-left", "top-right", "bottom-left", "bottom-right", "top", "bottom", "left", "right"] },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "scroll": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "scroll" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "orientation": { "enum": ["vertical", "horizontal", "both"] },
+            "scrollbarVisibility": { "enum": ["auto", "always", "hidden"] },
+            "p": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "px": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "py": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "m": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "mx": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "my": { "$ref": "tokens.json#/$defs/spacingToken" },
+            "bg": { "$ref": "tokens.json#/$defs/bgToken" },
+            "bgOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "border": { "type": "boolean" },
+            "borderColor": { "$ref": "tokens.json#/$defs/colorToken" },
+            "borderOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "rounded": { "$ref": "tokens.json#/$defs/radiusToken" },
+            "shadow": { "$ref": "tokens.json#/$defs/shadowToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "bgOpacity": ["bg"],
+            "borderColor": ["border"],
+            "borderOpacity": ["border"]
+          }
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "icon": {
+      "$comment": "Two icon sets: Lucide (default) and Carbon (prefix 'carbon:'). Name examples: 'shield' (Lucide), 'carbon:chip' (Carbon). Carbon icons accept ONLY numeric px size (16/20/24/32); Lucide accepts string tokens ('sm'/'md'/'lg') or numeric. If a name has no 'carbon:' prefix it routes to Lucide.",
+      "type": "object",
+      "properties": {
+        "type": { "const": "icon" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "$comment": "Lucide name (e.g. 'shield') or Carbon with prefix (e.g. 'carbon:chip'). Without 'carbon:' prefix the icon routes to Lucide."
+            },
+            "size": {
+              "type": ["string", "number"],
+              "$comment": "Lucide: string token ('sm','md','lg') or number px. Carbon: MUST be a number (16, 20, 24, 32). String tokens are silently ignored by Carbon."
+            },
+            "color": { "type": "string" }
+          },
+          "required": ["name"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "text": {
+      "$comment": "Text renders props.content as display text. It does NOT use children. Always set content in props.",
+      "type": "object",
+      "properties": {
+        "type": { "const": "text" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "$comment": "The text to display. This is NOT React children - it is a prop."
+            },
+            "variant": { "enum": ["h1", "h2", "h3", "body", "label", "mono"] },
+            "size": { "$ref": "tokens.json#/$defs/textSizeToken" },
+            "weight": { "$ref": "tokens.json#/$defs/fontWeightToken" },
+            "tracking": { "$ref": "tokens.json#/$defs/trackingToken" },
+            "color": { "$ref": "tokens.json#/$defs/colorToken" },
+            "colorOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "align": { "enum": ["start", "center", "end", "justify"] },
+            "glow": { "type": "boolean" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "colorOpacity": ["color"]
+          }
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "button": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "button" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string" },
+            "action": { "type": "string" },
+            "variant": { "enum": ["primary", "secondary", "ghost", "danger"] },
+            "disabled": { "type": "boolean" },
+            "loading": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["action"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "input": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "input" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "action": { "type": "string", "$comment": "Custom action ID override. Default: input_change" },
+            "placeholder": { "type": "string" },
+            "value": { "type": "string" },
+            "trigger": { "enum": ["blur", "change"] },
+            "type": { "enum": ["text", "password", "number", "email", "url", "tel", "date", "time"] },
+            "disabled": { "type": "boolean" },
+            "error": { "type": ["boolean", "string"] },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "switch": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "switch" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "action": { "type": "string" },
+            "label": { "type": "string" },
+            "checked": { "type": "boolean" },
+            "disabled": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "select": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "select" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "action": { "type": "string" },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": { "type": "string" },
+                  "value": { "type": "string" }
+                },
+                "required": ["label", "value"]
+              }
+            },
+            "placeholder": { "type": "string" },
+            "value": { "type": "string" },
+            "disabled": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name", "options"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "image": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "image" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "src": { "type": "string" },
+            "alt": { "type": "string" },
+            "rounded": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["src"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "spacer": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "spacer" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "size": { "type": ["string", "number"] },
+            "flex": { "type": ["boolean", "number"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["type"]
+    },
+
+    "divider": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "divider" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "direction": { "enum": ["horizontal", "vertical"] },
+            "content": { "type": "string" },
+            "align": { "enum": ["start", "center", "end"] },
+            "color": { "$ref": "tokens.json#/$defs/colorToken" },
+            "colorOpacity": { "$ref": "tokens.json#/$defs/opacityToken" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "additionalProperties": false,
+          "dependencies": {
+            "colorOpacity": ["color"]
+          }
+        }
+      },
+      "required": ["type"]
+    },
+
+    "slider": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "slider" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "step": { "type": "number" },
+            "value": {
+              "type": "number",
+              "$comment": "STRONGLY RECOMMENDED. Without value, the slider thumb is not rendered. Always provide an initial value."
+            },
+            "name": { "type": "string" },
+            "action": { "type": "string", "$comment": "Custom action ID override. Default: input_change" },
+            "disabled": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "checkbox": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "checkbox" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "checked": { "type": "boolean" },
+            "name": { "type": "string" },
+            "action": { "type": "string" },
+            "label": { "type": "string" },
+            "disabled": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "radiogroup": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "radiogroup" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string" },
+            "name": { "type": "string" },
+            "action": { "type": "string" },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": { "type": "string" },
+                  "value": { "type": "string" }
+                },
+                "required": ["label", "value"]
+              }
+            },
+            "disabled": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name", "options"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "badge": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "badge" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string" },
+            "name": { "type": "string", "$comment": "Identifier sent in remove_badge event payload" },
+            "action": { "type": "string", "$comment": "Custom action ID override. Default: remove_badge" },
+            "variant": {
+              "enum": ["solid", "outline", "ghost"],
+              "$comment": "Visual style. NOT semantic colors. Use 'color' prop for color (default: 'primary')."
+            },
+            "color": {
+              "type": "string",
+              "$comment": "'primary' (default) or a CSS color string for custom badge color."
+            },
+            "removable": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["label"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "codeeditor": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "codeeditor" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string" },
+            "language": { "type": "string" },
+            "readOnly": { "type": "boolean" },
+            "name": { "type": "string" },
+            "action": { "type": "string", "$comment": "Custom action ID override. Default: input_change" },
+            "height": { "type": ["string", "number"] },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "skeleton": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "skeleton" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "width": { "type": ["string", "number"] },
+            "height": { "type": ["string", "number"] },
+            "variant": { "enum": ["pulse", "scan", "glitch"] },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          }
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "progress": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "progress" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "max": { "type": "number" },
+            "variant": { "enum": ["bar", "blocky", "scan"] },
+            "label": { "type": "string" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          }
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "tooltip": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "tooltip" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "content": { "type": "string" },
+            "side": { "enum": ["top", "right", "bottom", "left"] },
+            "align": { "enum": ["start", "center", "end"] },
+            "delay": { "type": "number" }
+          },
+          "required": ["content"]
+        },
+        "children": { "$ref": "#/$defs/layoutChildren" }
+      },
+      "required": ["type", "props", "children"]
+    },
+
+    "toast": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "toast" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "message": { "type": "string" },
+            "variant": { "enum": ["info", "success", "warning", "error"] },
+            "title": { "type": "string" },
+            "icon": { "type": "string" }
+          },
+          "required": ["message"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "avatar": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "avatar" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "src": { "type": "string" },
+            "alt": { "type": "string" },
+            "fallback": { "type": "string" },
+            "size": { "enum": ["sm", "md", "lg", "xl"] },
+            "shape": { "enum": ["circle", "square", "rounded"] },
+            "status": { "enum": ["online", "offline", "busy", "away"] },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          }
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "textarea": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "textarea" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "action": { "type": "string", "$comment": "Custom action ID override. Default: input_change" },
+            "value": { "type": "string" },
+            "placeholder": { "type": "string" },
+            "rows": { "type": "number" },
+            "maxLength": { "type": "number" },
+            "disabled": { "type": "boolean" },
+            "readOnly": { "type": "boolean" },
+            "error": { "type": ["boolean", "string"] },
+            "trigger": { "enum": ["blur", "change"] },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["name"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "spinner": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "spinner" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "size": { "enum": ["sm", "md", "lg"] },
+            "label": { "type": "string" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          }
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "link": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "link" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string" },
+            "href": { "type": "string" },
+            "action": { "type": "string" },
+            "disabled": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["label"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "markdown": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "markdown" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "content": { "type": "string" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["content"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "terminal": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "terminal" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "lines": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "autoScroll": { "type": "boolean" },
+            "className": { "type": "string" },
+            "style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["lines"]
+        }
+      },
+      "required": ["type", "props"]
+    }
+  }
+}

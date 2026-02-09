@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://eidou.com/events.json",
+  "$comment": "EUIP User Events v0.1.1 - Added 'kind' field to all payloads, relaxed 'action' to allow custom overrides via action prop, added remove_badge and link_navigate event types.",
+  "title": "EUIP User Events",
+  "type": "object",
+  "properties": {
+    "action": { "const": "submit_action" },
+    "payload": {
+      "type": "object",
+      "oneOf": [
+        {
+          "title": "Input Change",
+          "$comment": "Emitted by: input, textarea, codeeditor, slider, checkbox, radiogroup. The 'action' field defaults to 'input_change' but can be overridden by the component's action prop. The 'kind' field always identifies the original event type.",
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "kind": { "type": "string", "$comment": "Always 'input_change' regardless of action override" },
+                "name": { "type": "string" },
+                "value": {
+                  "oneOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" }
+                  ]
+                }
+              },
+              "required": ["kind", "name", "value"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["action", "payload"],
+          "additionalProperties": false
+        },
+        {
+          "title": "Switch Change",
+          "$comment": "Emitted by: switch. The 'action' field defaults to 'switch_change' but can be overridden.",
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "kind": { "type": "string", "$comment": "Always 'switch_change' regardless of action override" },
+                "name": { "type": "string" },
+                "value": { "type": "boolean" }
+              },
+              "required": ["kind", "name", "value"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["action", "payload"],
+          "additionalProperties": false
+        },
+        {
+          "title": "Select Change",
+          "$comment": "Emitted by: select. The 'action' field defaults to 'select_change' but can be overridden.",
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "kind": { "type": "string", "$comment": "Always 'select_change' regardless of action override" },
+                "name": { "type": "string" },
+                "value": { "type": "string" }
+              },
+              "required": ["kind", "name", "value"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["action", "payload"],
+          "additionalProperties": false
+        },
+        {
+          "title": "Remove Badge",
+          "$comment": "Emitted by: badge (when removable: true). The 'action' field defaults to 'remove_badge' but can be overridden.",
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "kind": { "type": "string", "$comment": "Always 'remove_badge' regardless of action override" },
+                "name": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+                "value": { "type": "string", "$comment": "The badge label" }
+              },
+              "required": ["kind", "value"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["action", "payload"],
+          "additionalProperties": false
+        },
+        {
+          "title": "Link Navigate",
+          "$comment": "Emitted by: link. The 'action' field defaults to 'link_navigate' but can be overridden.",
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "kind": { "type": "string", "$comment": "Always 'link_navigate' regardless of action override" },
+                "href": { "type": "string" }
+              },
+              "required": ["kind", "href"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["action", "payload"],
+          "additionalProperties": false
+        },
+        {
+          "title": "Generic Action",
+          "$comment": "Catch-all for button clicks and custom actions. Payload is an empty object.",
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "required": ["action", "payload"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": ["action", "payload"]
+}
