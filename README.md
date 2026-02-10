@@ -11,7 +11,7 @@
     <a href="https://ko-fi.com/meowfia"><img src="https://img.shields.io/badge/Ko--fi-Support%20Us-ff5e5b?logo=ko-fi&logoColor=white" alt="Ko-fi" /></a>
   </p>
 
-  <video src="https://github.com/user-attachments/assets/d9a0323e-bf94-4ddd-b449-5491a280ccd8" controls muted autoplay loop></video>
+  <video src="https://github.com/user-attachments/assets/f7fa8756-4a73-41d2-96cb-9e7452eaa97a" controls muted autoplay loop>[demo.webm](https://github.com/user-attachments/assets/f7fa8756-4a73-41d2-96cb-9e7452eaa97a)</video>
 </div>
 
 > Your AI agent has a brain. Eidou gives it a body.
