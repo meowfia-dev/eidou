@@ -35,6 +35,8 @@ pub fn run() {
         panic!("Failed to load config file: {}", e);
     }
 
+    config::inject_autodetect_transport();
+
     let mut config = EidouConfig::parse();
 
     // Load Host Theme (Phase 2)

@@ -75,6 +75,97 @@ pub fn inject_config_file_env() -> Result<(), EidouError> {
     Ok(())
 }
 
+fn resolve_auto_transport(is_pipe: bool) -> &'static str {
+    if is_pipe {
+        "stdio"
+    } else {
+        "sse"
+    }
+}
+
+fn detect_stdin_pipe() -> Option<bool> {
+    #[cfg(unix)]
+    {
+        stdin_is_pipe_unix()
+    }
+    #[cfg(windows)]
+    {
+        stdin_is_pipe_windows()
+    }
+    #[cfg(not(any(unix, windows)))]
+    {
+        None
+    }
+}
+
+/// Detect whether stdin is connected to a pipe.
+///
+/// Returns `true` only when stdin is a pipe. On detection failure, this
+/// returns `false` so transport auto-detection falls back to `sse`.
+fn stdin_is_pipe() -> bool {
+    detect_stdin_pipe().unwrap_or(false)
+}
+
+#[cfg(unix)]
+fn stdin_is_pipe_unix() -> Option<bool> {
+    use std::mem::MaybeUninit;
+
+    // SAFETY: `fstat` is called with fd 0 (stdin) and a valid stat buffer.
+    unsafe {
+        let mut stat = MaybeUninit::<libc::stat>::zeroed();
+        if libc::fstat(0, stat.as_mut_ptr()) != 0 {
+            return None;
+        }
+        let stat = stat.assume_init();
+        Some((stat.st_mode & libc::S_IFMT) == libc::S_IFIFO)
+    }
+}
+
+#[cfg(windows)]
+fn stdin_is_pipe_windows() -> Option<bool> {
+    const STD_INPUT_HANDLE: u32 = 0xFFFF_FFF6;
+    const FILE_TYPE_PIPE: u32 = 0x0003;
+
+    unsafe extern "system" {
+        fn GetStdHandle(n_std_handle: u32) -> isize;
+        fn GetFileType(h_file: isize) -> u32;
+    }
+
+    // SAFETY: Win32 handle/file-type queries are read-only operations.
+    unsafe {
+        let handle = GetStdHandle(STD_INPUT_HANDLE);
+        if handle == 0 || handle == -1_isize {
+            return None;
+        }
+
+        Some(GetFileType(handle) == FILE_TYPE_PIPE)
+    }
+}
+
+/// Inject auto-detected transport into `EIDOU_MCP_TRANSPORT`.
+///
+/// This must be called after `inject_config_file_env()` and before
+/// `EidouConfig::parse()`.
+pub fn inject_autodetect_transport() {
+    if std::env::var_os("EIDOU_MCP_TRANSPORT").is_some() {
+        tracing::info!("[Eidou] Transport auto-detect skipped (EIDOU_MCP_TRANSPORT already set)");
+        return;
+    }
+
+    let detection = detect_stdin_pipe();
+    let is_pipe = stdin_is_pipe();
+    let transport = resolve_auto_transport(is_pipe);
+
+    tracing::info!(
+        "[Eidou] Transport auto-detect result: transport={} stdin_pipe={} detected={}",
+        transport,
+        is_pipe,
+        detection.is_some()
+    );
+
+    std::env::set_var("EIDOU_MCP_TRANSPORT", transport);
+}
+
 /// Parse config.json5 content and return a list of (env_key, value) pairs.
 /// Returns Result with entries or strict failure.
 fn parse_config_entries(content: &str) -> Result<Vec<(&'static str, String)>, String> {
@@ -192,7 +283,7 @@ pub struct HostTokens {
 #[command(version, about, long_about = None)]
 pub struct EidouConfig {
     /// MCP Transport mode: stdio or http (or sse)
-    #[arg(long, env = "EIDOU_MCP_TRANSPORT", default_value = "stdio")]
+    #[arg(long, env = "EIDOU_MCP_TRANSPORT", default_value = "sse")]
     pub mcp_transport: TransportMode,
 
     /// MCP HTTP Port
@@ -546,6 +637,12 @@ impl EidouConfig {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_resolve_auto_transport() {
+        assert_eq!(resolve_auto_transport(true), "stdio");
+        assert_eq!(resolve_auto_transport(false), "sse");
+    }
 
     #[test]
     fn test_parse_queue_limit_arg() {
