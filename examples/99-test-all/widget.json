@@ -154,9 +154,31 @@
                                        "\u001b[31m[ERR]\u001b[0m Connection reset by peer.",
                                        "[SYST] Retrying..."
                                      ], 
-                                     "_style": { "height": "120px" } 
-                                   } 
-                                 }
+                                      "_style": { "height": "120px" } 
+                                    } 
+                                  },
+                                  
+                                  {
+                                    "type": "text",
+                                    "props": { "content": "4. Chart (Line)", "variant": "mono", "_style": { "fontSize": "10px", "opacity": 0.7 } }
+                                  },
+                                  {
+                                    "type": "chart",
+                                    "props": {
+                                      "variant": "line",
+                                      "height": 150,
+                                      "showGrid": false,
+                                      "showLegend": false,
+                                      "showTooltip": true,
+                                      "data": [
+                                        { "x": "A", "y": 10 },
+                                        { "x": "B", "y": 25 },
+                                        { "x": "C", "y": 15 },
+                                        { "x": "D", "y": 30 },
+                                        { "x": "E", "y": 20 }
+                                      ]
+                                    }
+                                  }
                                ]
                              }
                           ]
