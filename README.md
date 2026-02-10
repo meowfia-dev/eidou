@@ -15,9 +15,14 @@
 </div>
 
 > Your AI agent has a brain. Eidou gives it a body.
-> Send JSON. Get native desktop widgets. Collect user input. That's it.
 
-Eidou is a lightweight, headless daemon that lets any MCP-compliant AI Agent project User Interfaces onto the user's desktop. It decouples the **Brain** (your Agent/LLM) from the **Body** (Rendering & Window Management), communicating through EUIP (Eidou User Interface Protocol).
+AI agents can reason, plan, and execute — but they can't *show* you anything.
+
+- **Text is low bandwidth.** Agents dump walls of text when they need a dashboard.
+- **Chat is passive.** Chat windows can't collect structured input or show real-time data.
+- **Custom UIs are slow.** Building a React app for every agent is a waste of time.
+
+**Eidou fixes this.** Send JSON. Get native desktop windows. Collect user input. Any MCP-compatible agent, any language — no frontend code required.
 
 ---
 

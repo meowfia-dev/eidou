@@ -15,9 +15,14 @@
 </div>
 
 > 你的 AI Agent 擁有大腦。Eidou 賦予它軀體。
-> 傳送 JSON。取得原生桌面 Widgets。收集使用者輸入。就這麼簡單。
 
-Eidou 是一個輕量、headless 的 Daemon，讓任何相容 MCP 的 AI Agent 都能把 User Interface 投影到使用者桌面。它將 **Brain**（你的 Agent/LLM）與 **Body**（Rendering 與 Window Management）解耦，並透過 EUIP（Eidou User Interface Protocol）通訊。
+AI Agent 能推理、規劃、執行 — 但它沒辦法「秀」給你看。
+
+- **文字頻寬太低。** Agent 需要 Dashboard，卻只能輸出一牆文字。
+- **聊天是被動的。** 聊天視窗無法收集結構化輸入，也無法顯示即時資料。
+- **自建 UI 太慢。** 為每個 Agent 寫一套 React App，浪費時間。
+
+**Eidou 解決這件事。** 傳送 JSON，取得原生桌面視窗，收集使用者輸入。任何 MCP 相容的 Agent、任何語言 — 無需撰寫前端程式碼。
 
 ---
 
