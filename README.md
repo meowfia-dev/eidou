@@ -254,3 +254,7 @@ If you need to change this (e.g. to `3311`), update `src-tauri/tauri.conf.json` 
 <div align="center">
   <sub>Forged in the Void by Meowfia. <a href="https://ko-fi.com/meowfia">Buy us an energy drink?</a></sub>
 </div>
+
+#### AI Agent Marketplace Index And Agent Router | [API Doc](https://www.deepnlp.org/doc/ai_agent_marketplace)
+    [![AI Agent Marketplace and Router Badge](https://www.deepnlp.org/api/ai_agent_marketplace/svg?name=meowfia-dev/eidou&badge_type=review)](https://www.deepnlp.org/store/ai-agent/ai-agent/pub-meowfia-dev/eidou)
+    
