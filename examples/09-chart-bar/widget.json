@@ -1,0 +1,54 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Sales by Region",
+    "size": "md",
+    "position": {
+      "anchor": "center",
+      "offset": { "x": 0, "y": 0 }
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "safeArea": true,
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "Sales by Region",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "col",
+              "props": { "gap": "2" },
+              "children": [
+                {
+                  "type": "chart",
+                  "props": {
+                    "variant": "bar",
+                    "data": [
+                      { "region": "North", "q1": 1200, "q2": 1800, "q3": 1500 },
+                      { "region": "South", "q1": 900, "q2": 1400, "q3": 1100 },
+                      { "region": "East", "q1": 1600, "q2": 2100, "q3": 1900 },
+                      { "region": "West", "q1": 1100, "q2": 1300, "q3": 1700 }
+                    ],
+                    "stacked": true,
+                    "showGrid": true,
+                    "showLegend": true,
+                    "showTooltip": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

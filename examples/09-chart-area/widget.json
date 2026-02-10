@@ -1,0 +1,58 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Network Traffic",
+    "size": "md",
+    "position": {
+      "anchor": "center",
+      "offset": { "x": 0, "y": 0 }
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "safeArea": true,
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "Network Traffic",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "col",
+              "props": { "gap": "2" },
+              "children": [
+                {
+                  "type": "chart",
+                  "props": {
+                    "variant": "area",
+                    "data": [
+                      { "time": "00:00", "inbound": 120, "outbound": 80 },
+                      { "time": "04:00", "inbound": 45, "outbound": 30 },
+                      { "time": "08:00", "inbound": 280, "outbound": 190 },
+                      { "time": "12:00", "inbound": 420, "outbound": 310 },
+                      { "time": "16:00", "inbound": 380, "outbound": 260 },
+                      { "time": "20:00", "inbound": 250, "outbound": 170 },
+                      { "time": "23:59", "inbound": 150, "outbound": 95 }
+                    ],
+                    "stacked": true,
+                    "showGrid": true,
+                    "showLegend": true,
+                    "showTooltip": true,
+                    "animate": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

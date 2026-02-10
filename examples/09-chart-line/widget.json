@@ -1,0 +1,56 @@
+{
+  "type": "projection",
+  "props": {
+    "title": "Revenue Trend",
+    "size": "md",
+    "position": {
+      "anchor": "center",
+      "offset": { "x": 0, "y": 0 }
+    }
+  },
+  "children": [
+    {
+      "type": "field",
+      "props": {
+        "safeArea": true,
+        "contentPadding": "md"
+      },
+      "children": [
+        {
+          "type": "shard",
+          "props": {
+            "title": "Revenue Trend",
+            "variant": "glass",
+            "closable": true
+          },
+          "children": [
+            {
+              "type": "col",
+              "props": { "gap": "2" },
+              "children": [
+                {
+                  "type": "chart",
+                  "props": {
+                    "variant": "line",
+                    "data": [
+                      { "month": "Jan", "revenue": 4200, "cost": 2800 },
+                      { "month": "Feb", "revenue": 5100, "cost": 3100 },
+                      { "month": "Mar", "revenue": 4800, "cost": 2900 },
+                      { "month": "Apr", "revenue": 6200, "cost": 3400 },
+                      { "month": "May", "revenue": 7100, "cost": 3800 },
+                      { "month": "Jun", "revenue": 6800, "cost": 3600 }
+                    ],
+                    "showGrid": true,
+                    "showLegend": true,
+                    "showTooltip": true,
+                    "animate": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
