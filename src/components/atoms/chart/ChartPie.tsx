@@ -31,27 +31,33 @@ export function ChartPie({
       cornerRadius={0}
       borderWidth={1}
       borderColor={{ from: 'color', modifiers: [['darker', 0.6]] }}
-      margin={{ top: 20, right: showLegend ? 120 : 20, bottom: 20, left: 20 }}
+      margin={{
+        top: 20,
+        right: 20,
+        bottom: showLegend ? 60 : 20,
+        left: 20,
+      }}
       enableArcLinkLabels
       arcLinkLabelsSkipAngle={10}
       arcLinkLabelsTextColor="var(--foreground)"
       arcLinkLabelsThickness={1}
       arcLinkLabelsColor={{ from: 'color' }}
       arcLabelsSkipAngle={10}
-      arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
+      arcLabelsTextColor="#000000"
       isInteractive={showTooltip}
       animate={animate}
       legends={
         showLegend
           ? [
               {
-                anchor: 'right',
-                direction: 'column',
-                translateX: 100,
-                itemWidth: 90,
-                itemHeight: 20,
-                symbolSize: 10,
+                anchor: 'bottom',
+                direction: 'row',
+                translateY: 50,
+                itemWidth: 100,
+                itemHeight: 18,
+                symbolSize: 12,
                 symbolShape: 'square',
+                itemsSpacing: 4,
               },
             ]
           : undefined

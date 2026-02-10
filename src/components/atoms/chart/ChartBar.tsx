@@ -48,9 +48,9 @@ export function ChartBar({
       layout={horizontal ? 'horizontal' : 'vertical'}
       margin={{
         top: 20,
-        right: resolvedShowLegend ? 120 : 20,
-        bottom: bottomLabel ? 50 : 40,
-        left: leftLabel ? 60 : 50,
+        right: 20,
+        bottom: resolvedShowLegend ? 70 : (bottomLabel ? 55 : 45),
+        left: leftLabel ? 65 : 55,
       }}
       padding={0.3}
       borderRadius={0}
@@ -63,7 +63,7 @@ export function ChartBar({
         ...(bottomLabel
           ? {
               legend: bottomLabel,
-              legendOffset: 36,
+              legendOffset: 40,
               legendPosition: 'middle',
             }
           : {}),
@@ -75,7 +75,7 @@ export function ChartBar({
         ...(leftLabel
           ? {
               legend: leftLabel,
-              legendOffset: -50,
+              legendOffset: -55,
               legendPosition: 'middle',
             }
           : {}),
@@ -86,19 +86,20 @@ export function ChartBar({
       animate={animate}
       labelSkipWidth={12}
       labelSkipHeight={12}
-      labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+      labelTextColor="#000000"
       legends={
         resolvedShowLegend
           ? [
               {
-                anchor: 'bottom-right',
+                anchor: 'bottom',
                 dataFrom: 'keys',
-                direction: 'column',
-                translateX: 110,
+                direction: 'row',
+                translateY: 60,
                 itemWidth: 100,
-                itemHeight: 20,
-                symbolSize: 10,
+                itemHeight: 18,
+                symbolSize: 12,
                 symbolShape: 'square',
+                itemsSpacing: 4,
               },
             ]
           : undefined

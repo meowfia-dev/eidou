@@ -37,15 +37,15 @@ export function ChartLine({
       theme={theme}
       colors={colors}
       enableArea={enableArea}
-      areaOpacity={0.15}
+      areaOpacity={0.3}
       yScale={{ type: 'linear', stacked: stacked ?? false }}
       curve="monotoneX"
       lineWidth={2}
       margin={{
         top: 20,
-        right: resolvedShowLegend ? 120 : 20,
-        bottom: xLabel ? 50 : 40,
-        left: yLabel ? 60 : 50,
+        right: 20,
+        bottom: resolvedShowLegend ? 70 : (xLabel ? 55 : 45),
+        left: yLabel ? 65 : 55,
       }}
       axisBottom={{
         tickSize: 5,
@@ -54,7 +54,7 @@ export function ChartLine({
         ...(xLabel
           ? {
               legend: xLabel,
-              legendOffset: 36,
+              legendOffset: 40,
               legendPosition: 'middle',
             }
           : {}),
@@ -66,7 +66,7 @@ export function ChartLine({
         ...(yLabel
           ? {
               legend: yLabel,
-              legendOffset: -50,
+              legendOffset: -55,
               legendPosition: 'middle',
             }
           : {}),
@@ -86,13 +86,14 @@ export function ChartLine({
         resolvedShowLegend
           ? [
               {
-                anchor: 'bottom-right',
-                direction: 'column',
-                translateX: 110,
+                anchor: 'bottom',
+                direction: 'row',
+                translateY: 60,
                 itemWidth: 100,
-                itemHeight: 20,
-                symbolSize: 10,
+                itemHeight: 18,
+                symbolSize: 12,
                 symbolShape: 'square',
+                itemsSpacing: 4,
               },
             ]
           : undefined
