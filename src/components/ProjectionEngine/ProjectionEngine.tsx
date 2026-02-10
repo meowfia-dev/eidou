@@ -48,6 +48,7 @@ import { Spinner } from '../atoms/Spinner';
 import { Link } from '../atoms/Link';
 import { Markdown } from '../atoms/Markdown';
 import { Terminal } from '../atoms/Terminal';
+import { Chart } from '../atoms/Chart';
 
 // Providers
 import { ThemeProvider, Theme } from '../providers/ThemeProvider';
@@ -429,6 +430,9 @@ const REGISTRY: { [K in EuipType]: RegistryRenderFn<K> } = {
 
   terminal: ({ node }) =>
     renderValidatedAtom('terminal', node, (props) => <Terminal {...props} />),
+
+  chart: ({ node }) =>
+    renderValidatedAtom('chart', node, (props) => <Chart {...props} />),
 };
 
 // ============================================================================
