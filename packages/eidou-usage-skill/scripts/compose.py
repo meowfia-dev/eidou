@@ -217,6 +217,12 @@ def link_atom(label, **props):
     return {"type": "link", "props": p}
 
 
+def chart_atom(variant, data, **props):
+    p = {"variant": variant, "data": data}
+    p.update(props)
+    return {"type": "chart", "props": p}
+
+
 def slider_atom(name, **props):
     p = {
         "name": name,
@@ -254,6 +260,7 @@ _STYLE_COMPONENTS = frozenset(
         "scroll",
         "text",
         "divider",
+        "chart",
     ]
 )
 
@@ -1550,6 +1557,67 @@ class MediaGalleryBuilder(PatternBuilder):
         )
 
 
+class ChartBuilder(PatternBuilder):
+    VALID_VARIANTS = frozenset(["line", "bar", "pie", "area"])
+
+    def validate(self, spec):
+        variant = spec.get("variant")
+        if not isinstance(variant, str) or variant not in self.VALID_VARIANTS:
+            raise ComposeError(
+                "MISSING_FIELD",
+                "'variant' is required and must be one of: {}".format(
+                    ", ".join(sorted(self.VALID_VARIANTS))
+                ),
+                "spec_validation",
+                1,
+            )
+        data = ensure_list(spec, "data")
+        if len(data) == 0:
+            raise ComposeError(
+                "MISSING_FIELD",
+                "'data' must have at least one item",
+                "spec_validation",
+                1,
+            )
+        for index, row_item in enumerate(data):
+            ensure_object(row_item, "'data[{}]' must be an object".format(index))
+
+    def build(self, spec):
+        variant = spec["variant"]
+        data = spec["data"]
+        chart_props = {}
+        for key in (
+            "xKey",
+            "series",
+            "labelKey",
+            "valueKey",
+            "stacked",
+            "horizontal",
+            "donut",
+            "showGrid",
+            "showLegend",
+            "showTooltip",
+            "animate",
+        ):
+            if key in spec:
+                chart_props[key] = spec[key]
+
+        chart = chart_atom(variant, data, **chart_props)
+        content = col(children=[chart], gap="2")
+        return projection(
+            title=spec["title"],
+            size=spec.get("size", "auto"),
+            theme=spec.get("theme"),
+            children=[
+                field_node(
+                    children=[
+                        shard(title=spec["title"], variant="glass", children=[content])
+                    ]
+                )
+            ],
+        )
+
+
 PATTERN_REGISTRY = {
     "form": FormBuilder(),
     "data_table": DataTableBuilder(),
@@ -1565,6 +1633,7 @@ PATTERN_REGISTRY = {
     "terminal_output": TerminalOutputBuilder(),
     "progress_tracker": ProgressTrackerBuilder(),
     "media_gallery": MediaGalleryBuilder(),
+    "chart": ChartBuilder(),
 }
 
 

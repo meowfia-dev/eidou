@@ -82,6 +82,7 @@ Pattern-specific fields are below.
 | `terminal_output` | Terminal log with run status | `lines` |
 | `progress_tracker` | Multi-step pipeline tracker | `steps` |
 | `media_gallery` | Grid image gallery | `items` |
+| `chart` | Data visualization (line/bar/pie/area) | `variant`, `data` |
 
 Default sizing note: `media_gallery` defaults to a ratio size (`16:9`, width `1024`, maxWidth `1200`) to keep image-heavy content stable without oversized auto windows.
 
@@ -127,6 +128,7 @@ One-line skeletons for quick authoring:
 - `terminal_output`: `{"pattern":"terminal_output","title":"Build","lines":["$ bun run build"]}`
 - `progress_tracker`: `{"pattern":"progress_tracker","title":"Pipeline","steps":[{"label":"Build","status":"complete"}]}`
 - `media_gallery`: `{"pattern":"media_gallery","title":"Shots","items":[{"src":"https://example.com/1.png"}]}`
+- `chart`: `{"pattern":"chart","title":"Revenue","variant":"line","data":[{"month":"Jan","revenue":4200}]}`
 
 ## Recommended Workflow
 
