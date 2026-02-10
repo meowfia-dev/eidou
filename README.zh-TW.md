@@ -5,6 +5,8 @@
   <h1>Eidou</h1>
   <p><strong>透過 MCP，為 AI Agents 打造桌面 UI。</strong></p>
   <p>
+    <a href="https://github.com/meowfia-dev/eidou/actions/workflows/ci.yml"><img src="https://github.com/meowfia-dev/eidou/actions/workflows/ci.yml/badge.svg?branch=0x0" alt="CI" /></a>
+    <a href="https://github.com/meowfia-dev/eidou/releases/latest"><img src="https://img.shields.io/github/v/release/meowfia-dev/eidou" alt="Release" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
     <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-blue" alt="Platform" />
     <img src="https://img.shields.io/badge/MCP-Compatible-green" alt="MCP Compatible" />
