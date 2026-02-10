@@ -36,7 +36,8 @@
         { "$ref": "#/$defs/spinner" },
         { "$ref": "#/$defs/link" },
         { "$ref": "#/$defs/markdown" },
-        { "$ref": "#/$defs/terminal" }
+        { "$ref": "#/$defs/terminal" },
+        { "$ref": "#/$defs/chart" }
       ]
     },
 
@@ -961,6 +962,82 @@
             "style": { "$ref": "#/$defs/style" }
           },
           "required": ["lines"]
+        }
+      },
+      "required": ["type", "props"]
+    },
+
+    "chart": {
+      "$comment": "Data visualization component. Supports line, bar, pie, and area chart variants. Data is provided as flat tabular objects (rows). The component auto-infers xKey and series from data if not explicitly provided.",
+      "type": "object",
+      "properties": {
+        "type": { "const": "chart" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "variant": {
+              "enum": ["line", "bar", "pie", "area"],
+              "$comment": "Chart type. 'area' renders as line chart with filled area."
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": ["string", "number"]
+                }
+              },
+              "minItems": 1,
+              "$comment": "Flat tabular data. Each object is a row. Keys are column names. Values must be string or number."
+            },
+            "xKey": {
+              "type": "string",
+              "$comment": "Key for X-axis categories (line/bar/area). Auto-inferred if omitted: first string-typed key."
+            },
+            "series": {
+              "type": "array",
+              "items": { "type": "string" },
+              "$comment": "Keys to plot as Y-axis series (line/bar/area). Auto-inferred if omitted: all numeric keys except xKey."
+            },
+            "labelKey": {
+              "type": "string",
+              "$comment": "Key for pie slice labels. Auto-inferred if omitted: first string-typed key."
+            },
+            "valueKey": {
+              "type": "string",
+              "$comment": "Key for pie slice values. Auto-inferred if omitted: first numeric key."
+            },
+            "stacked": {
+              "type": "boolean",
+              "$comment": "Stack series. Applies to bar and area variants."
+            },
+            "horizontal": {
+              "type": "boolean",
+              "$comment": "Horizontal layout. Applies to bar variant only."
+            },
+            "donut": {
+              "type": "boolean",
+              "$comment": "Render pie as donut (inner radius 0.5). Applies to pie variant only."
+            },
+            "xLabel": { "type": "string" },
+            "yLabel": { "type": "string" },
+            "height": {
+              "type": ["number", "string"],
+              "$comment": "Chart height. Number = px. String = CSS value. Default: 300."
+            },
+            "colors": {
+              "type": "array",
+              "items": { "type": "string" },
+              "$comment": "Custom color array for series/slices. Overrides tactical palette."
+            },
+            "showLegend": { "type": "boolean" },
+            "showGrid": { "type": "boolean" },
+            "showTooltip": { "type": "boolean" },
+            "animate": { "type": "boolean" },
+            "_style": { "$ref": "#/$defs/style" }
+          },
+          "required": ["variant", "data"],
+          "additionalProperties": false
         }
       },
       "required": ["type", "props"]

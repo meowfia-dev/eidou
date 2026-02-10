@@ -130,6 +130,7 @@ When a widget structure violates these rules, the backend returns an error:
 | `link` | Hyperlink or action trigger. |
 | `markdown` | Markdown content renderer. |
 | `terminal` | Terminal output display. |
+| `chart` | Data visualization (line/bar/pie/area). |
 
 ## 4. Component Props Specification
 
@@ -362,6 +363,26 @@ When a widget structure violates these rules, the backend returns an error:
 - **`lines`** (array of strings, **REQUIRED**): Terminal output lines.
 - `autoScroll` (boolean): Auto-scroll to bottom on new lines (default: true).
 - Supports ANSI color codes via ansi-to-html.
+
+### `chart`
+- **`variant`** (enum, **REQUIRED**): `line`, `bar`, `pie`, `area`.
+- **`data`** (array, **REQUIRED**): Array of flat objects (rows). Keys are column names. Values must be string or number.
+- `xKey` (string): X-axis category key (line/bar/area). Auto-inferred: first string-typed key.
+- `series` (string[]): Y-axis series keys (line/bar/area). Auto-inferred: all numeric keys.
+- `labelKey` (string): Pie slice label key. Auto-inferred: first string-typed key.
+- `valueKey` (string): Pie slice value key. Auto-inferred: first numeric key.
+- `stacked` (boolean): Stack series (bar/area).
+- `horizontal` (boolean): Horizontal bars (bar only).
+- `donut` (boolean): Donut mode (pie only, inner radius 0.5).
+- `xLabel` (string): X-axis label.
+- `yLabel` (string): Y-axis label.
+- `height` (number|string): Chart height. Default: 300px.
+- `colors` (string[]): Custom color palette override.
+- `showLegend` (boolean): Show legend (default: true if 2+ series).
+- `showGrid` (boolean): Show grid (default: true, cartesian only).
+- `showTooltip` (boolean): Show tooltips (default: true).
+- `animate` (boolean): Enable animations (default: true).
+- `_style` (object): Escape hatch for container styling.
 
 ## 5. Event Protocol
 

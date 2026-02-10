@@ -138,6 +138,7 @@ export interface EuipPropsByType {
   link: PropsOf<typeof import('../components/atoms/Link').Link>;
   markdown: PropsOf<typeof import('../components/atoms/Markdown').Markdown>;
   terminal: PropsOf<typeof import('../components/atoms/Terminal').Terminal>;
+  chart: import('../components/atoms/chart/types').ChartProps;
 }
 
 export type EuipType = keyof EuipPropsByType;

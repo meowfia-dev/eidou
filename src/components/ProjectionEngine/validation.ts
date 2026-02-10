@@ -44,6 +44,7 @@ export const REQUIRED_PROPS: Partial<Record<EuipType, readonly string[]>> = {
   link: ['label'],
   markdown: ['content'],
   terminal: ['lines'],
+  chart: ['variant', 'data'],
 } as const;
 
 /**
