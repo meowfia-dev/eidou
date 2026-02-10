@@ -27,7 +27,7 @@ async function main() {
 
   const transport = new StdioClientTransport({
     command: eidouBin!,
-    args: [],
+    args: ["--mcp-transport", "stdio"],
     env: { ...env, EIDOU_POOL_SIZE: "1" }
   });
 
