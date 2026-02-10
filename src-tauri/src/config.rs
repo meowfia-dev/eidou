@@ -75,22 +75,38 @@ pub fn inject_config_file_env() -> Result<(), EidouError> {
     Ok(())
 }
 
-fn resolve_auto_transport(is_pipe: bool) -> &'static str {
-    if is_pipe {
+fn resolve_auto_transport(stdin_is_ipc: bool) -> &'static str {
+    if stdin_is_ipc {
         "stdio"
     } else {
         "sse"
     }
 }
 
-fn detect_stdin_pipe() -> Option<bool> {
+/// Detect whether stdin is connected to an IPC channel (pipe or socket).
+///
+/// MCP clients (bun, Node.js, Claude Desktop, etc.) spawn child processes
+/// with stdin connected via `socketpair()` (AF_UNIX), not `pipe()`.  A naive
+/// `S_IFIFO`-only check misses sockets entirely.
+///
+/// Detection matrix:
+///   - `S_IFIFO`  (pipe)   -> stdio  (shell pipe, some MCP clients)
+///   - `S_IFSOCK` (socket) -> stdio  (bun, Node.js, most MCP clients)
+///   - `S_IFCHR`  (tty)    -> sse    (user typed `eidou` in terminal)
+///   - `S_IFCHR`  (other)  -> sse    (double-click, /dev/null, launcher)
+///   - anything else        -> sse    (safe fallback)
+///
+/// Returns `Some(true)` if stdin is a pipe or socket (use stdio),
+/// `Some(false)` otherwise (use sse),
+/// `None` if detection failed entirely.
+fn detect_stdin_is_ipc() -> Option<bool> {
     #[cfg(unix)]
     {
-        stdin_is_pipe_unix()
+        stdin_is_ipc_unix()
     }
     #[cfg(windows)]
     {
-        stdin_is_pipe_windows()
+        stdin_is_ipc_windows()
     }
     #[cfg(not(any(unix, windows)))]
     {
@@ -98,31 +114,31 @@ fn detect_stdin_pipe() -> Option<bool> {
     }
 }
 
-/// Detect whether stdin is connected to a pipe.
-///
-/// Returns `true` only when stdin is a pipe. On detection failure, this
-/// returns `false` so transport auto-detection falls back to `sse`.
-fn stdin_is_pipe() -> bool {
-    detect_stdin_pipe().unwrap_or(false)
+/// Check if stdin is an IPC channel; falls back to false on failure.
+fn stdin_is_ipc() -> bool {
+    detect_stdin_is_ipc().unwrap_or(false)
 }
 
+/// Unix: returns true if stdin is a pipe (`S_IFIFO`) or socket (`S_IFSOCK`).
 #[cfg(unix)]
-fn stdin_is_pipe_unix() -> Option<bool> {
+fn stdin_is_ipc_unix() -> Option<bool> {
     use std::mem::MaybeUninit;
 
-    // SAFETY: `fstat` is called with fd 0 (stdin) and a valid stat buffer.
+    // SAFETY: fstat is called with fd 0 (stdin) and a valid stat buffer.
     unsafe {
         let mut stat = MaybeUninit::<libc::stat>::zeroed();
         if libc::fstat(0, stat.as_mut_ptr()) != 0 {
             return None;
         }
         let stat = stat.assume_init();
-        Some((stat.st_mode & libc::S_IFMT) == libc::S_IFIFO)
+        let file_type = stat.st_mode & libc::S_IFMT;
+        Some(file_type == libc::S_IFIFO || file_type == libc::S_IFSOCK)
     }
 }
 
+/// Windows: returns true if stdin is a pipe.
 #[cfg(windows)]
-fn stdin_is_pipe_windows() -> Option<bool> {
+fn stdin_is_ipc_windows() -> Option<bool> {
     const STD_INPUT_HANDLE: u32 = 0xFFFF_FFF6;
     const FILE_TYPE_PIPE: u32 = 0x0003;
 
@@ -152,14 +168,14 @@ pub fn inject_autodetect_transport() {
         return;
     }
 
-    let detection = detect_stdin_pipe();
-    let is_pipe = stdin_is_pipe();
-    let transport = resolve_auto_transport(is_pipe);
+    let detection = detect_stdin_is_ipc();
+    let is_ipc = stdin_is_ipc();
+    let transport = resolve_auto_transport(is_ipc);
 
     tracing::info!(
-        "[Eidou] Transport auto-detect result: transport={} stdin_pipe={} detected={}",
+        "[Eidou] Transport auto-detect result: transport={} stdin_is_ipc={} detected={}",
         transport,
-        is_pipe,
+        is_ipc,
         detection.is_some()
     );
 
