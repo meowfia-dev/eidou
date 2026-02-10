@@ -10,6 +10,16 @@ const TACTICAL_COLORS = [
   '#60D0F0',
 ];
 
+// Eidou design system resolved colors (from --eidou-color-*-rgb in index.css).
+// Nivo theme applies these as SVG inline styles where CSS vars resolve correctly,
+// but we use the native var() syntax so theme overrides (e.g. light mode) propagate.
+const TEXT_COLOR = 'rgb(var(--eidou-color-text-rgb))';
+const TEXT_COLOR_DIM = 'rgb(var(--eidou-color-text-rgb) / 0.8)';
+const TEXT_COLOR_MUTED = 'rgb(var(--eidou-color-text-rgb) / 0.7)';
+const BORDER_COLOR = 'rgb(var(--eidou-color-border-rgb))';
+const BORDER_COLOR_DIM = 'rgb(var(--eidou-color-border-rgb) / 0.5)';
+const SURFACE_COLOR = 'rgb(var(--eidou-color-surface-rgb))';
+
 export function useChartTheme(customColors?: string[]): {
   theme: PartialTheme;
   colors: string[];
@@ -20,30 +30,30 @@ export function useChartTheme(customColors?: string[]): {
     const theme: PartialTheme = {
       text: {
         fontSize: 11,
-        fill: 'var(--foreground)',
+        fill: TEXT_COLOR,
         fontFamily: 'var(--font-mono)',
       },
       axis: {
-        domain: { line: { stroke: 'var(--border)', strokeWidth: 1 } },
+        domain: { line: { stroke: BORDER_COLOR, strokeWidth: 1 } },
         ticks: {
-          line: { stroke: 'var(--border)', strokeWidth: 1 },
-          text: { fill: 'var(--foreground)', fontSize: 11, opacity: 0.8 },
+          line: { stroke: BORDER_COLOR, strokeWidth: 1 },
+          text: { fill: TEXT_COLOR_DIM, fontSize: 11 },
         },
-        legend: { text: { fill: 'var(--foreground)', fontSize: 11, fontWeight: 600 } },
+        legend: { text: { fill: TEXT_COLOR, fontSize: 11, fontWeight: 600 } },
       },
       grid: {
-        line: { stroke: 'var(--border)', strokeWidth: 1, strokeDasharray: '3 4', opacity: 0.5 },
+        line: { stroke: BORDER_COLOR_DIM, strokeWidth: 1, strokeDasharray: '3 4' },
       },
       legends: {
-        text: { fill: 'var(--foreground)', fontSize: 11 },
+        text: { fill: TEXT_COLOR_MUTED, fontSize: 11 },
       },
       tooltip: {
         container: {
-          background: 'var(--card)',
-          border: '1px solid var(--border)',
+          background: SURFACE_COLOR,
+          border: `1px solid ${BORDER_COLOR}`,
           borderRadius: '0px',
           fontSize: 11,
-          color: 'var(--foreground)',
+          color: TEXT_COLOR,
           fontFamily: 'var(--font-mono)',
         },
       },

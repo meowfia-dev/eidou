@@ -74,10 +74,10 @@ export function ChartLine({
       enableGridX={showGrid}
       enableGridY={showGrid}
       enablePoints
-      pointSize={6}
+      pointSize={8}
       pointBorderWidth={2}
       pointBorderColor={{ from: 'serieColor' }}
-      pointColor="var(--card)"
+      pointColor="#CBD5E1"
       useMesh
       isInteractive={showTooltip}
       animate={animate}

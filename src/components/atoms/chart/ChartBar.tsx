@@ -84,9 +84,7 @@ export function ChartBar({
       enableGridY={horizontal ? false : showGrid}
       isInteractive={showTooltip}
       animate={animate}
-      labelSkipWidth={12}
-      labelSkipHeight={12}
-      labelTextColor="#000000"
+      enableLabel={false}
       legends={
         resolvedShowLegend
           ? [

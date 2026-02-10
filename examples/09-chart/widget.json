@@ -25,152 +25,140 @@
           },
           "children": [
             {
-              "type": "col",
-              "props": { "gap": "4" },
+              "type": "grid",
+              "props": { "columns": 2, "gap": "4" },
               "children": [
                 {
-                  "type": "row",
-                  "props": { "gap": "4" },
+                  "type": "col",
+                  "props": { "gap": "2" },
                   "children": [
                     {
-                      "type": "col",
-                      "props": { "gap": "2", "_style": { "flex": 1 } },
-                      "children": [
-                        {
-                          "type": "text",
-                          "props": {
-                            "content": "LINE: Revenue Trend",
-                            "variant": "label",
-                            "color": "primary"
-                          }
-                        },
-                        {
-                          "type": "chart",
-                          "props": {
-                            "variant": "line",
-                            "xKey": "month",
-                            "series": ["revenue", "cost"],
-                            "data": [
-                              { "month": "Jan", "revenue": 4200, "cost": 2800 },
-                              { "month": "Feb", "revenue": 5100, "cost": 3100 },
-                              { "month": "Mar", "revenue": 4800, "cost": 2900 },
-                              { "month": "Apr", "revenue": 6200, "cost": 3400 },
-                              { "month": "May", "revenue": 7100, "cost": 3800 },
-                              { "month": "Jun", "revenue": 6800, "cost": 3600 }
-                            ],
-                            "showGrid": true,
-                            "showLegend": true,
-                            "showTooltip": true,
-                            "animate": true
-                          }
-                        }
-                      ]
+                      "type": "text",
+                      "props": {
+                        "content": "LINE: Revenue Trend",
+                        "variant": "label",
+                        "color": "primary"
+                      }
                     },
                     {
-                      "type": "col",
-                      "props": { "gap": "2", "_style": { "flex": 1 } },
-                      "children": [
-                        {
-                          "type": "text",
-                          "props": {
-                            "content": "BAR: Sales by Region",
-                            "variant": "label",
-                            "color": "primary"
-                          }
-                        },
-                        {
-                          "type": "chart",
-                          "props": {
-                            "variant": "bar",
-                            "xKey": "region",
-                            "series": ["q1", "q2", "q3"],
-                            "data": [
-                              { "region": "North", "q1": 1200, "q2": 1800, "q3": 1500 },
-                              { "region": "South", "q1": 900, "q2": 1400, "q3": 1100 },
-                              { "region": "East", "q1": 1600, "q2": 2100, "q3": 1900 },
-                              { "region": "West", "q1": 1100, "q2": 1300, "q3": 1700 }
-                            ],
-                            "stacked": true,
-                            "showGrid": true,
-                            "showLegend": true,
-                            "showTooltip": true
-                          }
-                        }
-                      ]
+                      "type": "chart",
+                      "props": {
+                        "variant": "line",
+                        "xKey": "month",
+                        "series": ["revenue", "cost"],
+                        "data": [
+                          { "month": "Jan", "revenue": 4200, "cost": 2800 },
+                          { "month": "Feb", "revenue": 5100, "cost": 3100 },
+                          { "month": "Mar", "revenue": 4800, "cost": 2900 },
+                          { "month": "Apr", "revenue": 6200, "cost": 3400 },
+                          { "month": "May", "revenue": 7100, "cost": 3800 },
+                          { "month": "Jun", "revenue": 6800, "cost": 3600 }
+                        ],
+                        "showGrid": true,
+                        "showLegend": true,
+                        "showTooltip": true,
+                        "animate": true
+                      }
                     }
                   ]
                 },
                 {
-                  "type": "row",
-                  "props": { "gap": "4" },
+                  "type": "col",
+                  "props": { "gap": "2" },
                   "children": [
                     {
-                      "type": "col",
-                      "props": { "gap": "2", "_style": { "flex": 1 } },
-                      "children": [
-                        {
-                          "type": "text",
-                          "props": {
-                            "content": "PIE: Resource Allocation",
-                            "variant": "label",
-                            "color": "primary"
-                          }
-                        },
-                        {
-                          "type": "chart",
-                          "props": {
-                            "variant": "pie",
-                            "labelKey": "category",
-                            "valueKey": "hours",
-                            "data": [
-                              { "category": "Engineering", "hours": 480 },
-                              { "category": "Design", "hours": 240 },
-                              { "category": "Marketing", "hours": 160 },
-                              { "category": "Operations", "hours": 120 },
-                              { "category": "Research", "hours": 200 }
-                            ],
-                            "donut": true,
-                            "showLegend": true,
-                            "showTooltip": true
-                          }
-                        }
-                      ]
+                      "type": "text",
+                      "props": {
+                        "content": "BAR: Sales by Region",
+                        "variant": "label",
+                        "color": "primary"
+                      }
                     },
                     {
-                      "type": "col",
-                      "props": { "gap": "2", "_style": { "flex": 1 } },
-                      "children": [
-                        {
-                          "type": "text",
-                          "props": {
-                            "content": "AREA: Network Traffic",
-                            "variant": "label",
-                            "color": "primary"
-                          }
-                        },
-                        {
-                          "type": "chart",
-                          "props": {
-                            "variant": "area",
-                            "xKey": "time",
-                            "series": ["inbound", "outbound"],
-                            "data": [
-                              { "time": "00:00", "inbound": 120, "outbound": 80 },
-                              { "time": "04:00", "inbound": 45, "outbound": 30 },
-                              { "time": "08:00", "inbound": 280, "outbound": 190 },
-                              { "time": "12:00", "inbound": 420, "outbound": 310 },
-                              { "time": "16:00", "inbound": 380, "outbound": 260 },
-                              { "time": "20:00", "inbound": 250, "outbound": 170 },
-                              { "time": "23:59", "inbound": 150, "outbound": 95 }
-                            ],
-                            "stacked": true,
-                            "showGrid": true,
-                            "showLegend": true,
-                            "showTooltip": true,
-                            "animate": true
-                          }
-                        }
-                      ]
+                      "type": "chart",
+                      "props": {
+                        "variant": "bar",
+                        "xKey": "region",
+                        "series": ["q1", "q2", "q3"],
+                        "data": [
+                          { "region": "North", "q1": 1200, "q2": 1800, "q3": 1500 },
+                          { "region": "South", "q1": 900, "q2": 1400, "q3": 1100 },
+                          { "region": "East", "q1": 1600, "q2": 2100, "q3": 1900 },
+                          { "region": "West", "q1": 1100, "q2": 1300, "q3": 1700 }
+                        ],
+                        "stacked": true,
+                        "showGrid": true,
+                        "showLegend": true,
+                        "showTooltip": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "col",
+                  "props": { "gap": "2" },
+                  "children": [
+                    {
+                      "type": "text",
+                      "props": {
+                        "content": "PIE: Resource Allocation",
+                        "variant": "label",
+                        "color": "primary"
+                      }
+                    },
+                    {
+                      "type": "chart",
+                      "props": {
+                        "variant": "pie",
+                        "labelKey": "category",
+                        "valueKey": "hours",
+                        "data": [
+                          { "category": "Engineering", "hours": 480 },
+                          { "category": "Design", "hours": 240 },
+                          { "category": "Marketing", "hours": 160 },
+                          { "category": "Operations", "hours": 120 },
+                          { "category": "Research", "hours": 200 }
+                        ],
+                        "donut": true,
+                        "showLegend": true,
+                        "showTooltip": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "col",
+                  "props": { "gap": "2" },
+                  "children": [
+                    {
+                      "type": "text",
+                      "props": {
+                        "content": "AREA: Network Traffic",
+                        "variant": "label",
+                        "color": "primary"
+                      }
+                    },
+                    {
+                      "type": "chart",
+                      "props": {
+                        "variant": "area",
+                        "xKey": "time",
+                        "series": ["inbound", "outbound"],
+                        "data": [
+                          { "time": "00:00", "inbound": 120, "outbound": 80 },
+                          { "time": "04:00", "inbound": 45, "outbound": 30 },
+                          { "time": "08:00", "inbound": 280, "outbound": 190 },
+                          { "time": "12:00", "inbound": 420, "outbound": 310 },
+                          { "time": "16:00", "inbound": 380, "outbound": 260 },
+                          { "time": "20:00", "inbound": 250, "outbound": 170 },
+                          { "time": "23:59", "inbound": 150, "outbound": 95 }
+                        ],
+                        "stacked": true,
+                        "showGrid": true,
+                        "showLegend": true,
+                        "showTooltip": true,
+                        "animate": true
+                      }
                     }
                   ]
                 }

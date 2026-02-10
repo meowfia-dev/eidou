@@ -32,18 +32,13 @@ export function ChartPie({
       borderWidth={1}
       borderColor={{ from: 'color', modifiers: [['darker', 0.6]] }}
       margin={{
-        top: 20,
-        right: 20,
-        bottom: showLegend ? 60 : 20,
-        left: 20,
+        top: 10,
+        right: 10,
+        bottom: showLegend ? 80 : 10,
+        left: 10,
       }}
-      enableArcLinkLabels
-      arcLinkLabelsSkipAngle={10}
-      arcLinkLabelsTextColor="var(--foreground)"
-      arcLinkLabelsThickness={1}
-      arcLinkLabelsColor={{ from: 'color' }}
-      arcLabelsSkipAngle={10}
-      arcLabelsTextColor="#000000"
+      enableArcLinkLabels={false}
+      enableArcLabels={false}
       isInteractive={showTooltip}
       animate={animate}
       legends={
@@ -52,10 +47,10 @@ export function ChartPie({
               {
                 anchor: 'bottom',
                 direction: 'row',
-                translateY: 50,
-                itemWidth: 100,
+                translateY: 65,
+                itemWidth: 85,
                 itemHeight: 18,
-                symbolSize: 12,
+                symbolSize: 10,
                 symbolShape: 'square',
                 itemsSpacing: 4,
               },
