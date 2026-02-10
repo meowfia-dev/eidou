@@ -10,8 +10,8 @@
     <img src="https://img.shields.io/badge/MCP-Compatible-green" alt="MCP Compatible" />
     <a href="https://ko-fi.com/meowfia"><img src="https://img.shields.io/badge/Ko--fi-Support%20Us-ff5e5b?logo=ko-fi&logoColor=white" alt="Ko-fi" /></a>
   </p>
-  
-  <video src="docs/assets/demo.webm" controls autoplay loop muted style="max-width: 100%; border-radius: 8px; margin-top: 16px;"></video>
+
+  <video src="https://github.com/user-attachments/assets/d9a0323e-bf94-4ddd-b449-5491a280ccd8" controls muted autoplay loop></video>
 </div>
 
 > Your AI agent has a brain. Eidou gives it a body.
