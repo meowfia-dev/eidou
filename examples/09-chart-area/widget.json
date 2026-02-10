@@ -32,6 +32,8 @@
                   "type": "chart",
                   "props": {
                     "variant": "area",
+                    "xKey": "time",
+                    "series": ["inbound", "outbound"],
                     "data": [
                       { "time": "00:00", "inbound": 120, "outbound": 80 },
                       { "time": "04:00", "inbound": 45, "outbound": 30 },

@@ -32,6 +32,8 @@
                   "type": "chart",
                   "props": {
                     "variant": "pie",
+                    "labelKey": "category",
+                    "valueKey": "hours",
                     "data": [
                       { "category": "Engineering", "hours": 480 },
                       { "category": "Design", "hours": 240 },

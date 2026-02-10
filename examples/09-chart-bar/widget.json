@@ -32,6 +32,8 @@
                   "type": "chart",
                   "props": {
                     "variant": "bar",
+                    "xKey": "region",
+                    "series": ["q1", "q2", "q3"],
                     "data": [
                       { "region": "North", "q1": 1200, "q2": 1800, "q3": 1500 },
                       { "region": "South", "q1": 900, "q2": 1400, "q3": 1100 },

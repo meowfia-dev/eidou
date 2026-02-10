@@ -32,6 +32,8 @@
                   "type": "chart",
                   "props": {
                     "variant": "line",
+                    "xKey": "month",
+                    "series": ["revenue", "cost"],
                     "data": [
                       { "month": "Jan", "revenue": 4200, "cost": 2800 },
                       { "month": "Feb", "revenue": 5100, "cost": 3100 },
