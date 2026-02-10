@@ -114,10 +114,52 @@ jobs:
           releaseBody: |
             ## Eidou ${{ github.ref_name }}
 
-            Download the appropriate installer for your platform below.
+            **Installers** (recommended for GUI/Daemon usage):
+            `.dmg` (macOS) | `.exe`/`.msi` (Windows) | `.deb`/`.rpm` (Linux) | `.AppImage` (Linux portable)
+
+            **Portable binaries** (recommended for MCP Client integration):
+            `.tar.gz` (Linux/macOS) | `.zip` (Windows)
 
             > **Note:** These builds are currently unsigned.
             > You may see security warnings on macOS and Windows.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      # -- Portable Binary Packaging --
+      # macOS: .app.tar.gz is already uploaded by tauri-action.
+      # Linux: Package raw binary as tar.gz for MCP Client configs.
+      # Windows: Package raw exe as zip for MCP Client configs.
+
+      - name: Package portable binary (Linux)
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: |
+          cp src-tauri/target/release/eidou eidou
+          tar czf "eidou-linux-x86_64.tar.gz" eidou
+          rm eidou
+
+      - name: Package portable binary (Windows)
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: |
+          Copy-Item "src-tauri\target\release\eidou.exe" "eidou.exe"
+          Compress-Archive -Path "eidou.exe" -DestinationPath "eidou-windows-x86_64.zip"
+          Remove-Item "eidou.exe"
+
+      - name: Upload portable binary to Release (Linux)
+        if: startsWith(matrix.platform, 'ubuntu')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: eidou-linux-x86_64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload portable binary to Release (Windows)
+        if: matrix.platform == 'windows-latest'
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: eidou-windows-x86_64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
