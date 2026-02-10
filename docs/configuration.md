@@ -9,7 +9,47 @@ Eidou uses a hierarchical configuration system. Values are resolved in the follo
 1.  **CLI Arguments**: Flags passed directly to the binary (e.g., `--mcp-transport sse`).
 2.  **Environment Variables**: Variables set in the shell (e.g., `EIDOU_MCP_TRANSPORT=sse`).
 3.  **Config File**: `config.json5` in the OS-standard config directory.
-4.  **Built-in Defaults**: Hardcoded values in the Eidou binary.
+4.  **Auto-Detection**: Transport mode is auto-detected from stdin state (see below).
+5.  **Built-in Defaults**: Hardcoded values in the Eidou binary (SSE for transport).
+
+---
+
+## Transport Auto-Detection
+
+Eidou automatically detects the appropriate transport mode by inspecting stdin at startup:
+
+| Launch Method | stdin state | Auto-detected Transport |
+|---------------|-------------|------------------------|
+| MCP Client spawns Eidou | Pipe | **Stdio** |
+| Double-click (GUI) | `/dev/null` or closed | **SSE** |
+| Terminal `./eidou` | TTY (interactive) | **SSE** |
+| systemd service | Closed/null | **SSE** |
+
+**Rule:** If stdin is a pipe, an MCP Client is feeding data, so Stdio mode is used. Otherwise, a human launched us, so SSE mode is used.
+
+Auto-detection only fires when `EIDOU_MCP_TRANSPORT` is not set by any higher-priority source (CLI, env var, or config file). If detection fails for any reason, SSE is used as a safe fallback.
+
+A startup log line reports the detection result:
+```
+[Eidou] Transport auto-detect result: transport=sse stdin_pipe=false detected=true
+```
+
+### Best Practice
+
+Although auto-detection handles MCP Clients correctly, we recommend explicit transport in MCP configs:
+
+```json
+{
+  "mcpServers": {
+    "eidou": {
+      "command": "/path/to/eidou",
+      "args": ["--mcp-transport", "stdio"]
+    }
+  }
+}
+```
+
+Explicit is better than implicit. Auto-detection is the safety net, not the primary mechanism.
 
 ---
 
@@ -17,10 +57,10 @@ Eidou uses a hierarchical configuration system. Values are resolved in the follo
 
 Eidou supports two primary deployment modes:
 
-- **Stdio Mode** (default): An MCP Client (Claude Desktop, Cursor, etc.) spawns Eidou as a subprocess. Communication flows over stdin/stdout.
-- **Daemon Mode**: The user launches Eidou directly (double-click, startup item, etc.). It runs as a System Tray daemon. MCP Clients connect over HTTP/SSE.
+- **Stdio Mode**: An MCP Client (Claude Desktop, Cursor, etc.) spawns Eidou as a subprocess. Communication flows over stdin/stdout. Auto-detected when stdin is a pipe.
+- **Daemon Mode**: The user launches Eidou directly (double-click, startup item, etc.). It runs as a System Tray daemon. MCP Clients connect over HTTP/SSE. Auto-detected when stdin is not a pipe.
 
-To use Daemon Mode without CLI arguments or environment variables, create a `config.json5` file.
+To use Daemon Mode without CLI arguments or environment variables, create a `config.json5` file. A reference example is provided at [`/config.example.json5`](/config.example.json5).
 
 ### Config File Location
 
@@ -39,7 +79,7 @@ The configuration file uses **JSON5** syntax (comments allowed). All fields are 
 ```json5
 {
   // MCP transport mode: "stdio", "http", "sse"
-  // Default: "stdio"
+  // Default: auto-detected (pipe=stdio, otherwise=sse)
   mcp_transport: "sse",
 
   // HTTP/SSE server port

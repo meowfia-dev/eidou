@@ -64,8 +64,22 @@ AI agents can reason, plan, and execute — but they can't *show* you anything.
                                                       +------------------+
 ```
 
-- **Host (Backend):** Rust + Tauri v2 + Axum. Window lifecycle, MCP routing, event bridging, window pooling. Stdio (default) or HTTP/SSE transport.
+- **Host (Backend):** Rust + Tauri v2 + Axum. Window lifecycle, MCP routing, event bridging, window pooling. Transport auto-detected (Stdio when piped, SSE otherwise) or explicit via config.
 - **Renderer (Frontend):** React 19 + Tailwind CSS v3 + Radix UI. Pure function `f(EUIP_JSON) -> UI`. No business logic. Schema-driven `Projection -> Field -> Content` hierarchy.
+
+---
+
+## Download
+
+Download the latest release from [GitHub Releases](https://github.com/meowfia-dev/eidou/releases/latest).
+
+| Use Case | Format | Platform |
+|----------|--------|----------|
+| MCP Client integration | `.tar.gz` / `.zip` (portable binary) | Linux / macOS / Windows |
+| GUI Daemon (install) | `.dmg` / `.exe` / `.msi` / `.deb` / `.rpm` | macOS / Windows / Linux |
+| GUI Daemon (portable) | `.AppImage` / `.app.tar.gz` | Linux / macOS |
+
+> **Note:** All builds are currently unsigned. You may see security warnings on macOS and Windows.
 
 ---
 
@@ -95,6 +109,8 @@ See [`examples/`](examples/) for the full catalog (calculator, toasts, system mo
 
 To connect Eidou to an MCP Client (like Claude Desktop), add this to your MCP config.
 
+> **Tip:** Eidou auto-detects transport mode: when an MCP Client spawns it (stdin is a pipe), it uses Stdio automatically. Specifying `--mcp-transport stdio` explicitly is recommended as a best practice.
+
 ### Stdio Mode (Recommended)
 Replace `/ABSOLUTE/PATH/TO` with your actual path.
 
@@ -102,8 +118,8 @@ Replace `/ABSOLUTE/PATH/TO` with your actual path.
 {
   "mcpServers": {
     "eidou": {
-      "command": "/ABSOLUTE/PATH/TO/eidou/src-tauri/target/release/eidou",
-      "args": [],
+      "command": "/ABSOLUTE/PATH/TO/eidou",
+      "args": ["--mcp-transport", "stdio"],
       "env": {
         "EIDOU_POOL_SIZE": "5"
       }
@@ -157,7 +173,9 @@ EIDOU_AUTH_SECRET=my-secret-token ./src-tauri/target/release/eidou --mcp-transpo
 
 ### Daemon Mode (Config File)
 
-If you want to launch Eidou by double-clicking the binary or as a startup application (without passing CLI arguments), create a `config.json5` file:
+When you double-click Eidou or run it from a terminal (without piped stdin), it **automatically** starts in SSE mode on port 3100. No configuration needed for basic daemon usage.
+
+For customization (port, auth secret, pool size, etc.), create a `config.json5` file:
 
 | Platform | Path |
 |----------|------|
@@ -174,7 +192,7 @@ Example `config.json5` for daemon mode:
 }
 ```
 
-**Priority order:** CLI arguments > environment variables > config file > built-in defaults.
+**Priority order:** CLI arguments > environment variables > config file > auto-detection > built-in defaults.
 
 If you also use Eidou with an MCP Client (stdio), add `EIDOU_MCP_TRANSPORT=stdio` to the client's env config to override the config file. See [docs/configuration.md](docs/configuration.md) for full details.
 
@@ -185,7 +203,7 @@ If you also use Eidou with an MCP Client (stdio), add `EIDOU_MCP_TRANSPORT=stdio
 ### Stable
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `EIDOU_MCP_TRANSPORT` | `stdio` | Transport mode: `stdio`, `http`, `sse` |
+| `EIDOU_MCP_TRANSPORT` | *(auto-detected)* | Transport mode: `stdio`, `http`, `sse`. Auto-detected from stdin (pipe=stdio, otherwise=sse). |
 | `EIDOU_MCP_PORT` | `3100` | HTTP server port |
 | `EIDOU_MCP_HTTP_STATEFUL` | `1` | HTTP stateful sessions (`1/0` or `true/false`) |
 | `EIDOU_AUTH_SECRET` | *(generated)* | Fixed auth token for HTTP mode. If unset, a random token is generated. |

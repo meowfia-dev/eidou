@@ -64,8 +64,22 @@ AI Agent 能推理、規劃、執行 — 但它沒辦法「秀」給你看。
                                                       +------------------+
 ```
 
-- **Host (Backend):** Rust + Tauri v2 + Axum。負責視窗生命週期、MCP 路由、事件橋接、視窗池化。支援 Stdio（預設）或 HTTP/SSE transport。
+- **Host (Backend):** Rust + Tauri v2 + Axum。負責視窗生命週期、MCP 路由、事件橋接、視窗池化。Transport 自動偵測（管線輸入時使用 Stdio，否則使用 SSE），或透過設定明確指定。
 - **Renderer (Frontend):** React 19 + Tailwind CSS v3 + Radix UI。純函式 `f(EUIP_JSON) -> UI`。不承載商業邏輯。採用 schema-driven 的 `Projection -> Field -> Content` 階層。
+
+---
+
+## 下載
+
+從 [GitHub Releases](https://github.com/meowfia-dev/eidou/releases/latest) 下載最新版本。
+
+| 使用情境 | 格式 | 平台 |
+|---------|------|------|
+| MCP Client 整合 | `.tar.gz` / `.zip`（可攜式執行檔） | Linux / macOS / Windows |
+| GUI Daemon（安裝版） | `.dmg` / `.exe` / `.msi` / `.deb` / `.rpm` | macOS / Windows / Linux |
+| GUI Daemon（免安裝） | `.AppImage` / `.app.tar.gz` | Linux / macOS |
+
+> **注意：** 所有建置目前均未簽署。macOS 和 Windows 上可能會出現安全性警告。
 
 ---
 
@@ -95,6 +109,8 @@ bun examples/01-hello-world/client.ts
 
 要讓 Eidou 連接到 MCP Client（例如 Claude Desktop），請將以下內容加入你的 MCP 設定檔。
 
+> **提示：** Eidou 會自動偵測 transport 模式：當 MCP Client 啟動它時（stdin 是管線），會自動使用 Stdio。建議明確指定 `--mcp-transport stdio` 作為最佳實務。
+
 ### Stdio 模式（建議）
 請將 `/ABSOLUTE/PATH/TO` 替換成你的實際路徑。
 
@@ -102,8 +118,8 @@ bun examples/01-hello-world/client.ts
 {
   "mcpServers": {
     "eidou": {
-      "command": "/ABSOLUTE/PATH/TO/eidou/src-tauri/target/release/eidou",
-      "args": [],
+      "command": "/ABSOLUTE/PATH/TO/eidou",
+      "args": ["--mcp-transport", "stdio"],
       "env": {
         "EIDOU_POOL_SIZE": "5"
       }
@@ -157,7 +173,9 @@ EIDOU_AUTH_SECRET=my-secret-token ./src-tauri/target/release/eidou --mcp-transpo
 
 ### Daemon 模式（設定檔）
 
-如果你想直接雙擊執行檔啟動 Eidou，或是將其設為開機自動啟動（無需傳入 CLI 參數），請建立 `config.json5` 設定檔：
+當你雙擊 Eidou 或從終端機直接執行時（沒有管線輸入），它會**自動**以 SSE 模式啟動，監聽 port 3100。基本的 Daemon 使用無需任何設定。
+
+若要自訂（埠號、auth secret、池大小等），請建立 `config.json5` 設定檔：
 
 | 平台 | 路徑 |
 |------|------|
@@ -174,7 +192,7 @@ Daemon 模式的 `config.json5` 範例：
 }
 ```
 
-**優先順序：** CLI 參數 > 環境變數 > 設定檔 > 內建預設值。
+**優先順序：** CLI 參數 > 環境變數 > 設定檔 > 自動偵測 > 內建預設值。
 
 若你同時也使用 MCP Client 以 stdio 模式連接 Eidou，請在 client 的環境變數設定中加入 `EIDOU_MCP_TRANSPORT=stdio` 來覆蓋設定檔。完整說明請見 [docs/configuration.md](docs/configuration.md)。
 
@@ -185,7 +203,7 @@ Daemon 模式的 `config.json5` 範例：
 ### 穩定版
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `EIDOU_MCP_TRANSPORT` | `stdio` | Transport 模式：`stdio`、`http`、`sse` |
+| `EIDOU_MCP_TRANSPORT` | *（自動偵測）* | Transport 模式：`stdio`、`http`、`sse`。由 stdin 自動偵測（管線=stdio，否則=sse）。 |
 | `EIDOU_MCP_PORT` | `3100` | HTTP 伺服器埠號 |
 | `EIDOU_MCP_HTTP_STATEFUL` | `1` | HTTP 有狀態 session（`1/0` 或 `true/false`） |
 | `EIDOU_AUTH_SECRET` | *(generated)* | HTTP 模式固定 auth token。未設定時會隨機產生 token。 |

@@ -1,0 +1,36 @@
+// Eidou Configuration
+//
+// Copy this file to:
+//   Linux:   ~/.config/eidou/config.json5
+//   macOS:   ~/Library/Application Support/eidou/config.json5
+//   Windows: %APPDATA%\eidou\config\config.json5
+//
+// All keys are optional. Only specified keys override defaults.
+// Priority: CLI args > env vars > this file > auto-detection > hard default
+{
+  // Transport mode: "stdio", "http", "sse"
+  // Default: auto-detected (stdin pipe = stdio, otherwise = sse)
+  // mcp_transport: "sse",
+
+  // HTTP/SSE listen port (default: 3100)
+  // mcp_port: 3100,
+
+  // Window pool size (default: 5)
+  // pool_size: 5,
+
+  // Toast pool size (default: 3)
+  // toast_pool_size: 3,
+
+  // HTTP stateful session mode (default: true)
+  // mcp_http_stateful: true,
+
+  // User event queue limit (default: 256, range: 16-16384)
+  // user_event_queue_limit: 256,
+
+  // Fixed auth secret for HTTP/SSE mode.
+  // If unset, a random token is generated per session.
+  // auth_secret: "my-secret-token",
+
+  // Path to a custom theme file (JSON5)
+  // theme_config: "/path/to/theme.json5",
+}
