@@ -2,7 +2,7 @@
 name: eidou-usage
 description: Agent entrypoint for semantic UI composition via compose.py.
 license: MIT
-compatibility: opencode
+compatibility: opencode, claude-code
 metadata:
   owner: Souta (Meowfia)
   category: frontend
