@@ -69,7 +69,30 @@ AI Agent 能推理、規劃、執行 — 但它沒辦法「秀」給你看。
 
 ---
 
-## 下載
+## 安裝
+
+**一行安裝（macOS / Linux）：**
+```bash
+curl -fsSL https://raw.githubusercontent.com/meowfia-dev/eidou/0x0/install.sh | sh
+```
+
+**Windows（PowerShell）：**
+```powershell
+irm https://raw.githubusercontent.com/meowfia-dev/eidou/0x0/install.ps1 | iex
+```
+
+安裝時自動設定 MCP Client：
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/meowfia-dev/eidou/0x0/install.sh | sh -s -- --client claude-desktop
+
+# Windows
+.\install.ps1 -Client claude-desktop
+```
+
+支援的 Client：`claude-desktop`、`claude-code`、`opencode`。
+
+### 手動下載
 
 從 [GitHub Releases](https://github.com/meowfia-dev/eidou/releases/latest) 下載最新版本。
 

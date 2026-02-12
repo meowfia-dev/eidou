@@ -127,15 +127,29 @@ jobs:
           args: ${{ matrix.args }}
 
       # -- Portable Binary Packaging --
-      # macOS: .app.tar.gz is already uploaded by tauri-action.
-      # Linux: Package raw binary as tar.gz for MCP Client configs.
-      # Windows: Package raw exe as zip for MCP Client configs.
+      # Packages raw binaries for MCP Client configs (curl | sh installer).
+      # Linux/macOS: tar.gz with single binary.
+      # Windows: zip with single exe.
 
       - name: Package portable binary (Linux)
         if: startsWith(matrix.platform, 'ubuntu')
         run: |
           cp src-tauri/target/release/eidou eidou
           tar czf "eidou-linux-x86_64.tar.gz" eidou
+          rm eidou
+
+      - name: Package portable binary (macOS aarch64)
+        if: matrix.label == 'macos-aarch64'
+        run: |
+          cp src-tauri/target/aarch64-apple-darwin/release/eidou eidou
+          tar czf "eidou-macos-aarch64.tar.gz" eidou
+          rm eidou
+
+      - name: Package portable binary (macOS x86_64)
+        if: matrix.label == 'macos-x86_64'
+        run: |
+          cp src-tauri/target/x86_64-apple-darwin/release/eidou eidou
+          tar czf "eidou-macos-x86_64.tar.gz" eidou
           rm eidou
 
       - name: Package portable binary (Windows)
@@ -152,6 +166,24 @@ jobs:
         with:
           draft: true
           files: eidou-linux-x86_64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload portable binary to Release (macOS aarch64)
+        if: matrix.label == 'macos-aarch64'
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: eidou-macos-aarch64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload portable binary to Release (macOS x86_64)
+        if: matrix.label == 'macos-x86_64'
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: eidou-macos-x86_64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

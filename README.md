@@ -69,7 +69,30 @@ AI agents can reason, plan, and execute — but they can't *show* you anything.
 
 ---
 
-## Download
+## Install
+
+**One-liner (macOS / Linux):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/meowfia-dev/eidou/0x0/install.sh | sh
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/meowfia-dev/eidou/0x0/install.ps1 | iex
+```
+
+Auto-configure your MCP client in one step:
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/meowfia-dev/eidou/0x0/install.sh | sh -s -- --client claude-desktop
+
+# Windows
+.\install.ps1 -Client claude-desktop
+```
+
+Supported clients: `claude-desktop`, `claude-code`, `opencode`.
+
+### Manual Download
 
 Download the latest release from [GitHub Releases](https://github.com/meowfia-dev/eidou/releases/latest).
 
