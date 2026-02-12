@@ -23,6 +23,7 @@ Use this skill at L1: provide semantic IntentSpec JSON and let `compose.py` gene
 
 Detect your script root first, then call compose/validate from there.
 
+<!-- SKILL_VARIANT:unix:start -->
 ### macOS / Linux (Bash/Zsh)
 
 ```bash
@@ -33,7 +34,9 @@ export SKILL_DIR="packages/eidou-usage-skill/scripts"                       # In
 # Run
 python3 "$SKILL_DIR/compose.py" --input intent.json
 ```
+<!-- SKILL_VARIANT:unix:end -->
 
+<!-- SKILL_VARIANT:windows:start -->
 ### Windows (PowerShell)
 
 ```powershell
@@ -44,6 +47,7 @@ $env:SKILL_DIR = "packages\eidou-usage-skill\scripts"                           
 # Run
 python "$env:SKILL_DIR\compose.py" --input intent.json
 ```
+<!-- SKILL_VARIANT:windows:end -->
 
 ## Core Rules
 
@@ -53,6 +57,7 @@ python "$env:SKILL_DIR\compose.py" --input intent.json
 
 ## CLI Contract
 
+<!-- SKILL_VARIANT:unix:start -->
 ```bash
 # stdin -> stdout
 echo '{"pattern":"message","title":"Hi","message":"Yo"}' | \
@@ -64,6 +69,21 @@ python3 $SKILL_DIR/compose.py --input intent.json --output ui.json
 # validate-only dry run
 python3 $SKILL_DIR/compose.py --input intent.json --validate-only
 ```
+<!-- SKILL_VARIANT:unix:end -->
+
+<!-- SKILL_VARIANT:windows:start -->
+```powershell
+# stdin -> stdout
+'{"pattern":"message","title":"Hi","message":"Yo"}' |
+  python "$env:SKILL_DIR\compose.py"
+
+# file input / file output
+python "$env:SKILL_DIR\compose.py" --input intent.json --output ui.json
+
+# validate-only dry run
+python "$env:SKILL_DIR\compose.py" --input intent.json --validate-only
+```
+<!-- SKILL_VARIANT:windows:end -->
 
 ### Exit Codes
 
@@ -161,12 +181,23 @@ One-line skeletons for quick authoring:
 
 ## Recommended Workflow
 
+<!-- SKILL_VARIANT:unix:start -->
 ```bash
 # compose then validate
 echo '<intent_spec_json>' | \
   python3 $SKILL_DIR/compose.py | \
   python3 $SKILL_DIR/validate.py -
 ```
+<!-- SKILL_VARIANT:unix:end -->
+
+<!-- SKILL_VARIANT:windows:start -->
+```powershell
+# compose then validate
+'<intent_spec_json>' |
+  python "$env:SKILL_DIR\compose.py" |
+  python "$env:SKILL_DIR\validate.py" -
+```
+<!-- SKILL_VARIANT:windows:end -->
 
 Use this flow for every generated widget before calling `show_widget`.
 

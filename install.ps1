@@ -255,16 +255,16 @@ function Configure-OpenCode {
 $SkillSharedDir = Join-Path $env:LOCALAPPDATA "eidou\skill\eidou-usage"
 
 function Install-Skill {
-    $SkillUrl = "https://github.com/$Repo/releases/download/v$Version/eidou-usage-skill.tar.gz"
+    $SkillUrl = "https://github.com/$Repo/releases/download/v$Version/eidou-usage-skill.zip"
 
     Write-Info "Installing eidou-usage-skill..."
 
     $SkillTmp = Join-Path $env:TEMP "eidou-skill-$(Get-Random)"
     New-Item -ItemType Directory -Path $SkillTmp -Force | Out-Null
-    $TarPath = Join-Path $SkillTmp "skill.tar.gz"
+    $ZipPath = Join-Path $SkillTmp "skill.zip"
 
     try {
-        Invoke-WebRequest -Uri $SkillUrl -OutFile $TarPath -UseBasicParsing -ErrorAction Stop
+        Invoke-WebRequest -Uri $SkillUrl -OutFile $ZipPath -UseBasicParsing -ErrorAction Stop
     }
     catch {
         Write-Warn "Could not download eidou-usage-skill."
@@ -274,12 +274,12 @@ function Install-Skill {
         return $false
     }
 
-    # Extract tar.gz
+    # Extract zip
     try {
-        & tar -xzf $TarPath -C $SkillTmp 2>&1 | Out-Null
+        Expand-Archive -Path $ZipPath -DestinationPath $SkillTmp -Force
     }
     catch {
-        Write-Warn "Failed to extract skill package (tar not available)."
+        Write-Warn "Failed to extract skill package."
         Remove-Item -Recurse -Force $SkillTmp -ErrorAction SilentlyContinue
         return $false
     }
