@@ -220,17 +220,20 @@ function Configure-ClaudeCode {
         Write-Host ""
         Write-Host "  claude mcp add eidou $TargetBin -- --mcp-transport stdio" -ForegroundColor White
         Write-Host ""
-        return
+    }
+    else {
+        try {
+            & claude mcp add eidou $TargetBin -- --mcp-transport stdio 2>&1 | Out-Null
+            Write-Ok "Added eidou to Claude Code (user scope)"
+        }
+        catch {
+            Write-Warn "Failed to add via CLI. You can add manually:"
+            Write-Host "  claude mcp add eidou $TargetBin -- --mcp-transport stdio"
+        }
     }
 
-    try {
-        & claude mcp add eidou $TargetBin -- --mcp-transport stdio 2>&1 | Out-Null
-        Write-Ok "Added eidou to Claude Code (user scope)"
-    }
-    catch {
-        Write-Warn "Failed to add via CLI. You can add manually:"
-        Write-Host "  claude mcp add eidou $TargetBin -- --mcp-transport stdio"
-    }
+    # Link skill for Claude Code
+    Link-SkillForClient -ClientName "claude-code"
 }
 
 function Configure-OpenCode {
@@ -242,9 +245,108 @@ function Configure-OpenCode {
         enabled = $true
     }
     Merge-McpJson -ConfigFile $ConfigFile -ServerKey "mcp" -ServerValue $ServerValue
+
+    # Link skill for OpenCode
+    Link-SkillForClient -ClientName "opencode"
+}
+
+# -- Skill Installation (shared) --------------------------------------------
+
+$SkillSharedDir = Join-Path $env:LOCALAPPDATA "eidou\skill\eidou-usage"
+
+function Install-Skill {
+    $SkillUrl = "https://github.com/$Repo/releases/download/v$Version/eidou-usage-skill.tar.gz"
+
+    Write-Info "Installing eidou-usage-skill..."
+
+    $SkillTmp = Join-Path $env:TEMP "eidou-skill-$(Get-Random)"
+    New-Item -ItemType Directory -Path $SkillTmp -Force | Out-Null
+    $TarPath = Join-Path $SkillTmp "skill.tar.gz"
+
+    try {
+        Invoke-WebRequest -Uri $SkillUrl -OutFile $TarPath -UseBasicParsing -ErrorAction Stop
+    }
+    catch {
+        Write-Warn "Could not download eidou-usage-skill."
+        Write-Warn "The skill asset may not exist for v$Version."
+        Write-Warn "You can install it manually later."
+        Remove-Item -Recurse -Force $SkillTmp -ErrorAction SilentlyContinue
+        return $false
+    }
+
+    # Extract tar.gz
+    try {
+        & tar -xzf $TarPath -C $SkillTmp 2>&1 | Out-Null
+    }
+    catch {
+        Write-Warn "Failed to extract skill package (tar not available)."
+        Remove-Item -Recurse -Force $SkillTmp -ErrorAction SilentlyContinue
+        return $false
+    }
+
+    # Install to shared directory
+    if (Test-Path $SkillSharedDir) {
+        Remove-Item -Recurse -Force $SkillSharedDir -ErrorAction SilentlyContinue
+    }
+    $SkillParent = Split-Path -Parent $SkillSharedDir
+    if (-not (Test-Path $SkillParent)) {
+        New-Item -ItemType Directory -Path $SkillParent -Force | Out-Null
+    }
+    $ExtractedSkill = Join-Path $SkillTmp "eidou-usage-skill"
+    Move-Item -Path $ExtractedSkill -Destination $SkillSharedDir -Force
+
+    Remove-Item -Recurse -Force $SkillTmp -ErrorAction SilentlyContinue
+
+    $SkillMd = Join-Path $SkillSharedDir "SKILL.md"
+    $ComposePy = Join-Path $SkillSharedDir "scripts\compose.py"
+    if ((Test-Path $SkillMd) -and (Test-Path $ComposePy)) {
+        Write-Ok "Installed skill to $SkillSharedDir"
+        return $true
+    }
+    else {
+        Write-Warn "Skill installation may be incomplete. Check $SkillSharedDir"
+        return $false
+    }
+}
+
+function Link-SkillForClient {
+    param([string]$ClientName)
+
+    switch ($ClientName) {
+        "opencode" {
+            $LinkTarget = Join-Path $env:APPDATA "opencode\skill\eidou-usage"
+        }
+        "claude-code" {
+            $LinkTarget = Join-Path $env:USERPROFILE ".claude\skills\eidou-usage"
+        }
+        default { return }
+    }
+
+    # Remove existing
+    if (Test-Path $LinkTarget) {
+        Remove-Item -Recurse -Force $LinkTarget -ErrorAction SilentlyContinue
+    }
+
+    $LinkParent = Split-Path -Parent $LinkTarget
+    if (-not (Test-Path $LinkParent)) {
+        New-Item -ItemType Directory -Path $LinkParent -Force | Out-Null
+    }
+
+    # Try directory junction first (no admin required), fall back to copy
+    try {
+        New-Item -ItemType Junction -Path $LinkTarget -Target $SkillSharedDir -ErrorAction Stop | Out-Null
+        Write-Ok "Linked skill: $LinkTarget -> $SkillSharedDir"
+    }
+    catch {
+        # Fallback: copy
+        Copy-Item -Path $SkillSharedDir -Destination $LinkTarget -Recurse -Force
+        Write-Ok "Copied skill to $LinkTarget"
+    }
 }
 
 # Run client configuration
+Install-Skill
+
 switch ($Client) {
     "claude-desktop" { Configure-ClaudeDesktop }
     "claude-code"    { Configure-ClaudeCode }
@@ -261,6 +363,9 @@ Write-Host "  Binary:   $TargetBin" -ForegroundColor Green
 Write-Host "  Version:  v$Version" -ForegroundColor Green
 if ($Client) {
     Write-Host "  Client:   $Client (configured)" -ForegroundColor Green
+}
+if (Test-Path $SkillSharedDir) {
+    Write-Host "  Skill:    $SkillSharedDir" -ForegroundColor Green
 }
 Write-Host "  =================================================" -ForegroundColor DarkGray
 
@@ -317,6 +422,20 @@ if (-not $Client) {
     Write-Host "      }"
     Write-Host "    }"
     Write-Host ""
+
+    # Skill linking guide
+    if (Test-Path $SkillSharedDir) {
+        Write-Host "  -- Link eidou-usage-skill to your client --" -ForegroundColor DarkGray
+        Write-Host "  The skill is installed at: $SkillSharedDir"
+        Write-Host "  Link it to your client:"
+        Write-Host ""
+        Write-Host "    # OpenCode" -ForegroundColor DarkGray
+        Write-Host "    New-Item -ItemType Junction -Path `"$env:APPDATA\opencode\skill\eidou-usage`" -Target `"$SkillSharedDir`""
+        Write-Host ""
+        Write-Host "    # Claude Code" -ForegroundColor DarkGray
+        Write-Host "    New-Item -ItemType Junction -Path `"$env:USERPROFILE\.claude\skills\eidou-usage`" -Target `"$SkillSharedDir`""
+        Write-Host ""
+    }
 
     Write-Host "  Or re-run with -Client to auto-configure:" -ForegroundColor DarkGray
     Write-Host "    .\install.ps1 -Client claude-desktop"

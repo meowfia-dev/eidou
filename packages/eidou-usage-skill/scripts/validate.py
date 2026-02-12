@@ -17,8 +17,19 @@ import sys
 
 # Constants
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(SCRIPT_DIR)))
-SPEC_DIR = os.path.join(REPO_ROOT, "specification", "v0_1", "json")
+PACKAGE_DIR = os.path.dirname(SCRIPT_DIR)
+
+# Schema resolution: portable (bundled schema/) first, repo fallback second.
+# Installed mode: <skill>/schema/components.json (from release tarball)
+# Dev mode: <repo>/specification/v0_1/json/components.json (via relative path)
+_PORTABLE_SPEC_DIR = os.path.join(PACKAGE_DIR, "schema")
+_REPO_ROOT = os.path.dirname(os.path.dirname(PACKAGE_DIR))
+_REPO_SPEC_DIR = os.path.join(_REPO_ROOT, "specification", "v0_1", "json")
+
+if os.path.isdir(_PORTABLE_SPEC_DIR):
+    SPEC_DIR = _PORTABLE_SPEC_DIR
+else:
+    SPEC_DIR = _REPO_SPEC_DIR
 
 COMPONENTS_SCHEMA_PATH = os.path.join(SPEC_DIR, "components.json")
 

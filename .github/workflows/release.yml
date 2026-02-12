@@ -138,6 +138,19 @@ jobs:
           tar czf "eidou-linux-x86_64.tar.gz" eidou
           rm eidou
 
+      # -- Skill Package (platform-agnostic, built once on Linux) --
+      - name: Package eidou-usage-skill
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: |
+          mkdir -p _skill_dist/eidou-usage-skill/scripts
+          mkdir -p _skill_dist/eidou-usage-skill/schema
+          cp packages/eidou-usage-skill/SKILL.md _skill_dist/eidou-usage-skill/
+          cp packages/eidou-usage-skill/scripts/compose.py _skill_dist/eidou-usage-skill/scripts/
+          cp packages/eidou-usage-skill/scripts/validate.py _skill_dist/eidou-usage-skill/scripts/
+          cp specification/v0_1/json/*.json _skill_dist/eidou-usage-skill/schema/
+          tar czf "eidou-usage-skill.tar.gz" -C _skill_dist eidou-usage-skill
+          rm -rf _skill_dist
+
       - name: Package portable binary (macOS aarch64)
         if: matrix.label == 'macos-aarch64'
         run: |
@@ -165,7 +178,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: eidou-linux-x86_64.tar.gz
+          files: |
+            eidou-linux-x86_64.tar.gz
+            eidou-usage-skill.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -11,14 +11,27 @@ metadata:
 
 # Eidou Semantic Compose (Agent Entrypoint)
 
-> Agent entrypoint: `/.opencode/skill/eidou-usage/SKILL.md` (this file).
+> Agent entrypoint: this file (`SKILL.md`).
+>
+> **In-repo** (dev): `/.opencode/skill/eidou-usage-skill/SKILL.md`
+> **Installed** (standalone): `~/.config/opencode/skill/eidou-usage/SKILL.md`
 
 Use this skill at L1: provide semantic IntentSpec JSON and let `compose.py` generate valid EUIP.
 
 ## What To Use
 
-- Primary tool: `python3 packages/eidou-usage-skill/scripts/compose.py`
-- Validation gate: `python3 packages/eidou-usage-skill/scripts/validate.py -`
+Detect your script root first, then call compose/validate from there:
+
+- In-repo: `SKILL_DIR=packages/eidou-usage-skill/scripts`
+- Installed: `SKILL_DIR=~/.config/opencode/skill/eidou-usage/scripts`
+
+```
+COMPOSE="python3 $SKILL_DIR/compose.py"
+VALIDATE="python3 $SKILL_DIR/validate.py"
+```
+
+- Primary tool: `$COMPOSE`
+- Validation gate: `$VALIDATE -`
 
 Core rule: output must satisfy `projection -> field -> content` and pass `validate.py`.
 
@@ -27,13 +40,13 @@ Core rule: output must satisfy `projection -> field -> content` and pass `valida
 ```bash
 # stdin -> stdout
 echo '{"pattern":"message","title":"Hi","message":"Yo"}' | \
-  python3 packages/eidou-usage-skill/scripts/compose.py
+  python3 $SKILL_DIR/compose.py
 
 # file input / file output
-python3 packages/eidou-usage-skill/scripts/compose.py --input intent.json --output ui.json
+python3 $SKILL_DIR/compose.py --input intent.json --output ui.json
 
 # validate-only dry run
-python3 packages/eidou-usage-skill/scripts/compose.py --input intent.json --validate-only
+python3 $SKILL_DIR/compose.py --input intent.json --validate-only
 ```
 
 ### Exit Codes
@@ -135,8 +148,8 @@ One-line skeletons for quick authoring:
 ```bash
 # compose then validate
 echo '<intent_spec_json>' | \
-  python3 packages/eidou-usage-skill/scripts/compose.py | \
-  python3 packages/eidou-usage-skill/scripts/validate.py -
+  python3 $SKILL_DIR/compose.py | \
+  python3 $SKILL_DIR/validate.py -
 ```
 
 Use this flow for every generated widget before calling `show_widget`.
