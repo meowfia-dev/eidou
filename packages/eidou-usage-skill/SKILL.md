@@ -14,26 +14,42 @@ metadata:
 > Agent entrypoint: this file (`SKILL.md`).
 >
 > **In-repo** (dev): `/.opencode/skill/eidou-usage-skill/SKILL.md`
-> **Installed** (standalone): `~/.config/opencode/skill/eidou-usage/SKILL.md`
+> **Installed** (Linux/macOS): `~/.config/opencode/skill/eidou-usage/SKILL.md`
+> **Installed** (Windows): `%APPDATA%\opencode\skill\eidou-usage\SKILL.md`
 
 Use this skill at L1: provide semantic IntentSpec JSON and let `compose.py` generate valid EUIP.
 
-## What To Use
+## Setup & Usage
 
-Detect your script root first, then call compose/validate from there:
+Detect your script root first, then call compose/validate from there.
 
-- In-repo: `SKILL_DIR=packages/eidou-usage-skill/scripts`
-- Installed: `SKILL_DIR=~/.config/opencode/skill/eidou-usage/scripts`
+### macOS / Linux (Bash/Zsh)
 
+```bash
+# Set path
+export SKILL_DIR="packages/eidou-usage-skill/scripts"                       # In-repo
+# export SKILL_DIR="$HOME/.config/opencode/skill/eidou-usage/scripts"       # Installed
+
+# Run
+python3 "$SKILL_DIR/compose.py" --input intent.json
 ```
-COMPOSE="python3 $SKILL_DIR/compose.py"
-VALIDATE="python3 $SKILL_DIR/validate.py"
+
+### Windows (PowerShell)
+
+```powershell
+# Set path
+$env:SKILL_DIR = "packages\eidou-usage-skill\scripts"                                # In-repo
+# $env:SKILL_DIR = "$env:APPDATA\opencode\skill\eidou-usage\scripts"                 # Installed
+
+# Run
+python "$env:SKILL_DIR\compose.py" --input intent.json
 ```
 
-- Primary tool: `$COMPOSE`
-- Validation gate: `$VALIDATE -`
+## Core Rules
 
-Core rule: output must satisfy `projection -> field -> content` and pass `validate.py`.
+- Primary tool: `compose.py`
+- Validation gate: `validate.py`
+- Output must satisfy `projection -> field -> content` and pass `validate.py`.
 
 ## CLI Contract
 
