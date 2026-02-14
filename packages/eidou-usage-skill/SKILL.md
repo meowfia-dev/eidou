@@ -135,6 +135,86 @@ Pattern-specific fields are below.
 
 Default sizing note: `media_gallery` defaults to a ratio size (`16:9`, width `1024`, maxWidth `1200`) to keep image-heavy content stable without oversized auto windows.
 
+## Compose Pattern (Build Your Own)
+
+Use `"pattern": "compose"` to assemble custom UIs from building blocks.
+Each block in `body[]` is a `{ "use": "<block_name>", ...params }` directive.
+
+```json
+{
+  "pattern": "compose",
+  "title": "Server Dashboard",
+  "body": [
+    { "use": "metrics_row", "metrics": [{"label": "CPU", "value": "73%"}, {"label": "Mem", "value": "2.1GB"}] },
+    { "use": "chart_panel", "variant": "line", "data": [{"month": "Jan", "revenue": 4200}] },
+    { "use": "action_row", "actions": [{"label": "Refresh", "action": "refresh"}] }
+  ]
+}
+```
+
+Blocks are rendered **top-to-bottom** in a vertical stack inside a single Shard.
+You can mix molecules (small pieces) and organisms (functional sections) freely.
+
+### Molecules (Small Functional Units)
+
+| Block | Purpose | Required | Optional |
+|---|---|---|---|
+| `labeled_field` | Label + input control | `label`, `name` | `type`, `placeholder`, `default`, `error`, `options` |
+| `action_row` | Row of buttons | `actions[]` | *(each action: `label`, `action`, `variant`)* |
+| `key_value` | Key-value pair | `key`, `value` | `copyable` |
+| `metric_card` | Single metric display | `label`, `value` | `trend`, `status`, `progress` |
+| `status_badge` | Status indicator | `label` | `status`, `icon` |
+| `avatar_header` | Avatar + name + subtitle | `name` | `subtitle`, `avatar`, `icon` |
+| `empty_state` | No-data placeholder | `title` | `description`, `icon`, `action` |
+| `alert_box` | Inline notification | `message` | `variant` (info/warning/error/success), `title` |
+| `search_box` | Search input with icon | `name` | `placeholder`, `action` |
+| `divider` | Visual separator | *(none)* | *(none)* |
+| `text_block` | Text content | `content` | `variant` (h1/h2/h3/body/label/mono) |
+| `markdown_block` | Rendered markdown | `content` | *(none)* |
+| `chart_with_header` | Chart with title + badge | `title`, `variant`, `data[]` | `badge`, + chart props |
+| `chart_legend_card` | Series legend indicator | `label`, `value` | `color`, `trend` |
+| `chart_stat_row` | Stat row for chart context | `label`, `value` | *(none)* |
+
+### Organisms (Functional Sections)
+
+| Block | Purpose | Required | Optional |
+|---|---|---|---|
+| `form_section` | Group of form fields | `fields[]` | `actions[]`, `description` |
+| `data_table` | Tabular data | `columns[]`, `rows[]` | `row_actions[]`, `empty_message` |
+| `metrics_row` | Grid of metric cards | `metrics[]` | *(none)* |
+| `detail_section` | Key-value detail group | `fields[]` | `avatar` |
+| `settings_group` | Toggle/select settings | `title`, `settings[]` | `actions[]` |
+| `chat_log` | Message stream | `messages[]` | `actions[]` |
+| `terminal_panel` | Terminal output | `lines[]` | `status`, `progress`, `actions[]` |
+| `step_tracker` | Multi-step progress | `steps[]` | `actions[]` |
+| `media_grid` | Image grid | `items[]` | `actions[]` |
+| `chart_panel` | Data visualization | `variant`, `data[]` | `xKey`, `yKeys`, `actions[]` |
+| `chart_dashboard` | Multi-chart grid + metrics | `charts[]` | `metrics[]`, `columns`, `actions[]` |
+| `chart_detail` | Chart + stats breakdown | `title`, `variant`, `data[]` | `stats[]`, `actions[]`, + chart props |
+| `list_section` | Vertical item list | `items[]` | `actions[]`, `empty_message` |
+
+### Recipes (Suggested Combos)
+
+- **Dashboard**: `metrics_row` + `chart_panel` + `action_row`
+- **Master-Detail**: `data_table` + `detail_section`
+- **Form + Preview**: `form_section` + `markdown_block`
+- **Log Monitor**: `terminal_panel` + `step_tracker`
+- **Profile Page**: `avatar_header` + `detail_section` + `settings_group`
+- **Search Results**: `search_box` + `list_section` + `action_row`
+- **Analytics Dashboard**: `metrics_row` + `chart_dashboard`
+- **Chart Deep Dive**: `chart_detail` + `action_row`
+- **Chart + Legends**: `chart_with_header` + row of `chart_legend_card`s
+
+### Compose One-Liners
+
+```json
+{"pattern":"compose","title":"Quick","body":[{"use":"text_block","content":"Hello"},{"use":"action_row","actions":[{"label":"OK","action":"ok"}]}]}
+```
+
+```json
+{"pattern":"compose","title":"Stats","body":[{"use":"metrics_row","metrics":[{"label":"Users","value":"1.2k"}]},{"use":"divider"},{"use":"list_section","items":[{"primary":"Event A"},{"primary":"Event B"}]}]}
+```
+
 ## Semantic Field Type Mapping
 
 When building form/settings controls:

@@ -223,6 +223,25 @@ def chart_atom(variant, data, **props):
     return {"type": "chart", "props": p}
 
 
+CHART_OPTIONAL_PROPS = (
+    "xKey",
+    "series",
+    "labelKey",
+    "valueKey",
+    "stacked",
+    "horizontal",
+    "donut",
+    "showGrid",
+    "showLegend",
+    "showTooltip",
+    "animate",
+    "xLabel",
+    "yLabel",
+    "height",
+    "colors",
+)
+
+
 def slider_atom(name, **props):
     p = {
         "name": name,
@@ -444,6 +463,778 @@ def map_form_field_to_atom(field):
         value=str(field.get("default", "")),
         type="text",
     )
+
+
+def wrap_in_projection(title, content_children, size="auto", theme=None):
+    content = col(children=content_children, gap="4")
+    return projection(
+        title=title,
+        size=size,
+        theme=theme,
+        children=[
+            field_node(
+                children=[shard(title=title, variant="glass", children=[content])]
+            )
+        ],
+    )
+
+
+def build_labeled_field(block):
+    """Label + input control. Returns list of nodes."""
+    field_data = {
+        "name": block.get("name", "field"),
+        "type": block.get("type", "text"),
+        "placeholder": block.get("placeholder", ""),
+        "default": block.get("default", ""),
+        "options": block.get("options"),
+    }
+    atom = map_form_field_to_atom(field_data)
+    if atom is None:
+        return []
+    children = [
+        text(block.get("label", to_label(block.get("name", "field"))), variant="label"),
+        atom,
+    ]
+    error = block.get("error")
+    if is_non_empty_string(error):
+        children.append(text(error, variant="label", _style={"color": "#FF4444"}))
+    return [col(children=children, gap="2")]
+
+
+def build_action_row(block):
+    """Row of buttons. Returns list of nodes."""
+    actions = block.get("actions", [])
+    if not isinstance(actions, list) or len(actions) == 0:
+        return []
+    return [row(children=build_actions(actions, []), justify="end", gap="3")]
+
+
+def build_key_value(block):
+    """Key-value pair. Returns list of nodes."""
+    key_text = str(block.get("key", ""))
+    value_text = str(block.get("value", ""))
+    return [
+        row(
+            children=[
+                text(key_text, variant="label"),
+                text(value_text, variant="body"),
+            ],
+            justify="between",
+            align="center",
+        )
+    ]
+
+
+def build_metric_card(block):
+    """Single metric. Returns list of nodes."""
+    label = block.get("label", "Metric")
+    value = block.get("value", "")
+    card_children = [text(label, variant="label"), text(str(value), variant="h2")]
+    trend = block.get("trend")
+    if is_non_empty_string(trend):
+        card_children.append(badge(str(trend).upper(), variant="outline"))
+    metric_status = block.get("status")
+    if is_non_empty_string(metric_status):
+        card_children.append(
+            badge(
+                str(metric_status).upper(),
+                variant="outline",
+                color=status_color(metric_status),
+            )
+        )
+    progress_value = clamp_progress(block.get("progress"))
+    if progress_value is not None:
+        card_children.append(progress_atom(value=int(progress_value), max=100))
+    return [col(children=card_children, gap="1")]
+
+
+def build_status_badge(block):
+    """Status indicator. Returns list of nodes."""
+    label = str(block.get("label", ""))
+    children = []
+    icon_name = block.get("icon")
+    if is_non_empty_string(icon_name):
+        children.append(icon(icon_name))
+    status = block.get("status")
+    color = status_color(status) if is_non_empty_string(status) else None
+    if color:
+        children.append(badge(label, variant="outline", color=color))
+    else:
+        children.append(badge(label, variant="outline"))
+    return [row(children=children, gap="2", align="center")]
+
+
+def build_avatar_header(block):
+    """Avatar + name + subtitle. Returns list of nodes."""
+    name = str(block.get("name", ""))
+    children = []
+    avatar_props = normalize_avatar_props(block.get("avatar"), default_size="md")
+    if avatar_props:
+        children.append(avatar_atom(**avatar_props))
+    elif is_non_empty_string(block.get("icon")):
+        children.append(icon(block["icon"], size="md"))
+    name_children = [text(name, variant="h3")]
+    subtitle = block.get("subtitle")
+    if is_non_empty_string(subtitle):
+        name_children.append(text(subtitle, variant="body"))
+    children.append(col(children=name_children, gap="1"))
+    return [row(children=children, gap="2", align="center")]
+
+
+def build_empty_state(block):
+    """No-data placeholder. Returns list of nodes."""
+    children = []
+    icon_name = block.get("icon")
+    if is_non_empty_string(icon_name):
+        children.append(icon(icon_name, size="lg"))
+    children.append(text(block.get("title", "No data"), variant="h3"))
+    description = block.get("description")
+    if is_non_empty_string(description):
+        children.append(text(description, variant="body"))
+    action = block.get("action")
+    if isinstance(action, dict) and is_non_empty_string(action.get("label")):
+        children.append(
+            button(
+                action["label"],
+                action.get("action", "action"),
+                variant=action.get("variant", "primary"),
+            )
+        )
+    return [col(children=children, gap="2", align="center")]
+
+
+def build_alert_box(block):
+    """Inline notification. Returns list of nodes."""
+    variant_icons = {
+        "info": "info",
+        "warning": "alert-triangle",
+        "error": "x-circle",
+        "success": "check-circle",
+    }
+    variant = str(block.get("variant", "info"))
+    icon_name = variant_icons.get(variant, "info")
+    right_children = []
+    title = block.get("title")
+    if is_non_empty_string(title):
+        right_children.append(text(title, variant="label"))
+    right_children.append(text(block.get("message", ""), variant="body"))
+    return [
+        row(
+            children=[
+                icon(icon_name, size="md"),
+                col(children=right_children, gap="1"),
+            ],
+            gap="2",
+            align="start",
+        )
+    ]
+
+
+def build_search_box(block):
+    """Search input with icon. Returns list of nodes."""
+    name = block.get("name", "search")
+    placeholder = block.get("placeholder", "Search...")
+    search_action = block.get("action", "search")
+    return [
+        row(
+            children=[
+                icon("search", size="sm"),
+                input_atom(name, placeholder=placeholder, action=search_action),
+            ],
+            gap="2",
+            align="center",
+        )
+    ]
+
+
+def build_divider_block(block):
+    """Visual separator. Returns list of nodes."""
+    _ = block
+    return [divider()]
+
+
+def build_text_block(block):
+    """Text content. Returns list of nodes."""
+    content = str(block.get("content", ""))
+    variant = block.get("variant", "body")
+    return [text(content, variant=variant)]
+
+
+def build_markdown_block(block):
+    """Rendered markdown. Returns list of nodes."""
+    content = str(block.get("content", ""))
+    return [markdown_atom(content)]
+
+
+def build_form_section(block):
+    """Group of form fields. Returns list of nodes."""
+    fields = block.get("fields", [])
+    if not isinstance(fields, list):
+        fields = []
+    groups = []
+    for field in fields:
+        if not isinstance(field, dict):
+            continue
+        field_atom = map_form_field_to_atom(field)
+        if field_atom is None:
+            continue
+        field_label = field.get("label", to_label(field.get("name", "field")))
+        groups.append(
+            col(children=[text(field_label, variant="label"), field_atom], gap="2")
+        )
+    children = []
+    description = block.get("description")
+    if is_non_empty_string(description):
+        children.append(text(description, variant="body"))
+    children.extend(groups)
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="4")]
+
+
+def build_data_table_section(block):
+    """Tabular data. Returns list of nodes."""
+    columns = block.get("columns", [])
+    if not isinstance(columns, list):
+        columns = []
+    rows_data = block.get("rows", [])
+    if not isinstance(rows_data, list):
+        rows_data = []
+    row_actions = block.get("row_actions", [])
+    if not isinstance(row_actions, list):
+        row_actions = []
+    has_actions = len(row_actions) > 0
+    column_count = len(columns) + (1 if has_actions else 0)
+    header_cells = [
+        text(col_def.get("label", to_label(col_def.get("key", ""))), variant="label")
+        for col_def in columns
+        if isinstance(col_def, dict)
+    ]
+    if has_actions:
+        header_cells.append(text("Actions", variant="label"))
+    children = [
+        grid(children=header_cells, columns=max(column_count, 1), gap="2"),
+        divider(),
+    ]
+    if len(rows_data) == 0:
+        children.append(text(block.get("empty_message", "No data"), variant="body"))
+    else:
+        for row_data in rows_data:
+            row_obj = row_data if isinstance(row_data, dict) else {}
+            cells = [
+                text(str(row_obj.get(col_def.get("key", ""), "")))
+                for col_def in columns
+                if isinstance(col_def, dict)
+            ]
+            if has_actions:
+                action_buttons = build_actions(row_actions, [])
+                cells.append(row(children=action_buttons, gap="2"))
+            children.append(grid(children=cells, columns=max(column_count, 1), gap="2"))
+    return [col(children=children, gap="2")]
+
+
+def build_metrics_row(block):
+    """Grid of metric cards. Returns list of nodes."""
+    metrics = block.get("metrics", [])
+    if not isinstance(metrics, list):
+        metrics = []
+    cards = []
+    for metric in metrics:
+        cards.extend(build_metric_card(metric if isinstance(metric, dict) else {}))
+    if not cards:
+        return [text("No metrics", variant="body")]
+    return [grid(children=cards, columns=dashboard_columns(len(cards)), gap="3")]
+
+
+def build_detail_section(block):
+    """Key-value detail group. Returns list of nodes."""
+    label_style = {"flexShrink": 0, "width": "30%"}
+    value_style = {"flex": 1, "minWidth": 0}
+    truncate_style = {
+        "overflow": "hidden",
+        "textOverflow": "ellipsis",
+        "whiteSpace": "nowrap",
+    }
+    fields = block.get("fields", [])
+    if not isinstance(fields, list):
+        fields = []
+    rows_list = []
+    for item in fields:
+        if not isinstance(item, dict):
+            continue
+        value_text = str(item.get("value", ""))
+        is_badge_val = bool(item.get("badge", False))
+        if is_badge_val:
+            value_node = badge(value_text, variant="outline")
+        else:
+            value_node = text(value_text, variant="body", _style=truncate_style)
+        rows_list.append(
+            row(
+                children=[
+                    text(
+                        str(item.get("label", "")), variant="label", _style=label_style
+                    ),
+                    value_node,
+                ],
+                gap="3",
+                align="center",
+                _style=value_style,
+            )
+        )
+    children = []
+    avatar_data = block.get("avatar")
+    avatar_props = normalize_avatar_props(avatar_data, default_size="md")
+    if avatar_props:
+        children.append(
+            row(children=[avatar_atom(**avatar_props)], gap="2", align="center")
+        )
+    children.append(col(children=rows_list, gap="2"))
+    return [col(children=children, gap="3")]
+
+
+def build_settings_group(block):
+    """Settings group with controls. Returns list of nodes."""
+    title_text = block.get("title", "Settings")
+    settings = block.get("settings", [])
+    if not isinstance(settings, list):
+        settings = []
+    settings_rows = []
+    for setting in settings:
+        setting_obj = setting if isinstance(setting, dict) else {}
+        name = setting_obj.get("name", "")
+        label = setting_obj.get("label", "")
+        if not is_non_empty_string(name) or not is_non_empty_string(label):
+            continue
+        right_control = map_form_field_to_atom(setting_obj)
+        if right_control is None:
+            continue
+        left_children = [text(label, variant="body")]
+        description = setting_obj.get("description")
+        if is_non_empty_string(description):
+            left_children.append(text(description, variant="body"))
+        settings_rows.append(
+            row(
+                children=[col(children=left_children, gap="1"), right_control],
+                justify="between",
+                align="center",
+                gap="3",
+            )
+        )
+    children = [
+        text(title_text, variant="h3"),
+        divider(),
+        col(children=settings_rows, gap="2"),
+    ]
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="2")]
+
+
+def build_chat_log(block):
+    """Message stream. Returns list of nodes."""
+    bubble_style = {"flex": 1, "minWidth": 0}
+    messages = block.get("messages", [])
+    if not isinstance(messages, list):
+        messages = []
+    message_rows = []
+    for message in messages:
+        if not isinstance(message, dict):
+            continue
+        sender = str(message.get("sender", ""))
+        msg_content = str(message.get("content", ""))
+        if not sender or not msg_content:
+            continue
+        avatar_props = normalize_avatar_props(message.get("avatar"), default_size="sm")
+        if not avatar_props:
+            avatar_props = {"fallback": sender[:1].upper(), "size": "sm"}
+        bubble_children = []
+        header_children = [text(sender, variant="label")]
+        if is_non_empty_string(message.get("time", "")):
+            header_children.append(text(str(message["time"]), variant="body"))
+        bubble_children.append(row(children=header_children, justify="between"))
+        if str(message.get("format", "text")).lower() == "markdown":
+            bubble_children.append(markdown_atom(msg_content))
+        else:
+            bubble_children.append(text(msg_content, variant="body"))
+        avatar_node = avatar_atom(**avatar_props)
+        avatar_node["props"][style_prop_name("avatar")] = {"flexShrink": 0}
+        message_rows.append(
+            row(
+                children=[
+                    avatar_node,
+                    col(
+                        children=bubble_children,
+                        gap="1",
+                        p="2",
+                        border=True,
+                        rounded="md",
+                        _style=bubble_style,
+                    ),
+                ],
+                align="start",
+                gap="2",
+            )
+        )
+    children = [
+        scroll(
+            children=message_rows,
+            orientation="vertical",
+            scrollbarVisibility="auto",
+            border=True,
+            rounded="md",
+            p="2",
+        )
+    ]
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="3")]
+
+
+def build_terminal_panel(block):
+    """Terminal output. Returns list of nodes."""
+    lines = block.get("lines", [])
+    if not isinstance(lines, list):
+        lines = []
+    children = []
+    status = block.get("status")
+    if is_non_empty_string(status):
+        status_children = [
+            badge(str(status).upper(), variant="outline", color=status_color(status))
+        ]
+        if str(status).lower() == "running":
+            status_children.insert(0, spinner_atom(size="sm"))
+        children.append(row(children=status_children, gap="2", align="center"))
+    children.append(terminal_atom([str(line) for line in lines], autoScroll=True))
+    progress_value = clamp_progress(block.get("progress"))
+    if progress_value is not None:
+        children.append(progress_atom(value=int(progress_value), max=100))
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="3")]
+
+
+def build_step_tracker(block):
+    """Multi-step progress. Returns list of nodes."""
+    status_icon = {
+        "complete": "check-circle",
+        "in_progress": "loader",
+        "pending": "circle",
+        "error": "x-circle",
+    }
+    steps = block.get("steps", [])
+    if not isinstance(steps, list):
+        steps = []
+    step_nodes = []
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        status = str(step.get("status", "pending"))
+        icon_name = status_icon.get(status, "circle")
+        main_row = row(
+            children=[
+                icon(icon_name, color=status_color(status)),
+                text(str(step.get("label", "")), variant="body"),
+            ],
+            gap="2",
+            align="center",
+        )
+        step_children = [main_row]
+        progress_value = clamp_progress(step.get("progress"))
+        if progress_value is not None:
+            step_children.append(progress_atom(value=int(progress_value), max=100))
+        if is_non_empty_string(step.get("message", "")):
+            step_children.append(text(str(step["message"]), variant="body"))
+        step_nodes.append(
+            col(children=step_children, gap="1", p="2", border=True, rounded="md")
+        )
+    children = [col(children=step_nodes, gap="2")]
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="3")]
+
+
+def build_media_grid(block):
+    """Image grid. Returns list of nodes."""
+    items = block.get("items", [])
+    if not isinstance(items, list):
+        items = []
+    columns = block.get("columns")
+    if not isinstance(columns, int) or columns < 1:
+        if len(items) <= 1:
+            columns = 1
+        elif len(items) <= 4:
+            columns = 2
+        else:
+            columns = 3
+    cards = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        src = item.get("src")
+        if not is_non_empty_string(src):
+            continue
+        card_children = [
+            image_atom(str(src), alt=str(item.get("alt", "")), rounded=True)
+        ]
+        if is_non_empty_string(item.get("caption", "")):
+            card_children.append(text(str(item["caption"]), variant="body"))
+        cards.append(col(children=card_children, gap="1"))
+    children = [grid(children=cards, columns=columns, gap="2")]
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="3")]
+
+
+def build_chart_panel(block):
+    """Data visualization. Returns list of nodes."""
+    valid_variants = frozenset(["line", "bar", "pie", "area"])
+    variant = block.get("variant", "line")
+    if variant not in valid_variants:
+        variant = "line"
+    data = block.get("data", [])
+    if not isinstance(data, list):
+        data = []
+    chart_props = {}
+    for key in CHART_OPTIONAL_PROPS:
+        if key in block:
+            chart_props[key] = block[key]
+    chart = chart_atom(variant, data, **chart_props)
+    children = [chart]
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="2")]
+
+
+def build_chart_with_header(block):
+    """Chart with title header and optional badge. Returns list of nodes."""
+    title = str(block.get("title", "Chart"))
+    variant = block.get("variant", "line")
+    valid_variants = frozenset(["line", "bar", "pie", "area"])
+    if variant not in valid_variants:
+        variant = "line"
+    data = block.get("data", [])
+    if not isinstance(data, list):
+        data = []
+    header_children = [text(title, variant="label", color="primary")]
+    badge_text = block.get("badge")
+    if is_non_empty_string(badge_text):
+        header_children.append(badge(str(badge_text).upper(), variant="outline"))
+    header = row(children=header_children, gap="2", align="center")
+    chart_props = {}
+    for key in CHART_OPTIONAL_PROPS:
+        if key in block:
+            chart_props[key] = block[key]
+    chart = chart_atom(variant, data, **chart_props)
+    return [col(children=[header, chart], gap="2")]
+
+
+def build_chart_legend_card(block):
+    """Legend card with color indicator for chart series. Returns list of nodes."""
+    label = str(block.get("label", "Series"))
+    value = str(block.get("value", ""))
+    color = block.get("color", "#7CFF00")
+    indicator = {
+        "type": "divider",
+        "props": {"_style": {"borderColor": color, "borderWidth": "2px"}},
+    }
+    label_row = row(
+        children=[text(label, variant="label")],
+        gap="2",
+        align="center",
+    )
+    card_children = [indicator, label_row, text(value, variant="h2")]
+    trend = block.get("trend")
+    if is_non_empty_string(trend):
+        card_children.append(badge(str(trend).upper(), variant="outline"))
+    return [col(children=card_children, gap="1")]
+
+
+def build_chart_stat_row(block):
+    """Summary statistic row for chart context. Returns list of nodes."""
+    label = str(block.get("label", ""))
+    value = str(block.get("value", ""))
+    return [
+        row(
+            children=[
+                text(label, variant="label"),
+                {"type": "spacer", "props": {}},
+                text(value, variant="mono"),
+            ],
+            gap="2",
+            align="center",
+        )
+    ]
+
+
+def build_chart_dashboard(block):
+    """Multi-chart dashboard with optional metrics. Returns list of nodes."""
+    children = []
+    metrics = block.get("metrics")
+    if isinstance(metrics, list) and len(metrics) > 0:
+        metrics_nodes = build_metrics_row({"metrics": metrics})
+        children.extend(metrics_nodes)
+    charts = block.get("charts", [])
+    if not isinstance(charts, list):
+        charts = []
+    columns = block.get("columns", 2)
+    if not isinstance(columns, int) or columns < 1:
+        columns = 2
+    chart_nodes = []
+    for chart_spec in charts:
+        if not isinstance(chart_spec, dict):
+            continue
+        chart_nodes.extend(build_chart_with_header(chart_spec))
+    if len(chart_nodes) > 0:
+        children.append(grid(children=chart_nodes, columns=columns, gap="4"))
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="3")]
+
+
+def build_chart_detail(block):
+    """Single chart with stats breakdown. Returns list of nodes."""
+    chart_nodes = build_chart_with_header(block)
+    children = list(chart_nodes)
+    stats = block.get("stats")
+    if isinstance(stats, list) and len(stats) > 0:
+        children.append(divider())
+        for stat in stats:
+            if not isinstance(stat, dict):
+                continue
+            stat_nodes = build_chart_stat_row(stat)
+            children.extend(stat_nodes)
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=children, gap="2")]
+
+
+def build_list_section(block):
+    """Vertical item list. Returns list of nodes."""
+    truncate_style = {
+        "overflow": "hidden",
+        "textOverflow": "ellipsis",
+        "whiteSpace": "nowrap",
+    }
+    no_shrink_style = {"flexShrink": 0}
+    body_col_style = {"flex": 1, "minWidth": 0, "overflow": "hidden"}
+    items = block.get("items", [])
+    if not isinstance(items, list):
+        items = []
+    item_action = (
+        block.get("item_action") if isinstance(block.get("item_action"), dict) else None
+    )
+    children = []
+    if len(items) == 0:
+        children.append(text(block.get("empty_message", "No items"), variant="body"))
+    else:
+        for index, item in enumerate(items):
+            item_obj = item if isinstance(item, dict) else {}
+            primary = item_obj.get("primary", "")
+            if not is_non_empty_string(primary):
+                continue
+            row_children = []
+            avatar_props = normalize_avatar_props(
+                item_obj.get("avatar"), default_size="md"
+            )
+            if avatar_props:
+                node = avatar_atom(**avatar_props)
+                node["props"][style_prop_name("avatar")] = no_shrink_style
+                row_children.append(node)
+            elif is_non_empty_string(item_obj.get("image", "")):
+                node = image_atom(
+                    str(item_obj["image"]), alt=str(primary), rounded=True
+                )
+                node["props"][style_prop_name("image")] = no_shrink_style
+                row_children.append(node)
+            elif is_non_empty_string(item_obj.get("icon", "")):
+                row_children.append(icon(str(item_obj["icon"]), size="md"))
+            body_children = [text(primary, variant="body", _style=truncate_style)]
+            if is_non_empty_string(item_obj.get("secondary", "")):
+                body_children.append(
+                    text(item_obj["secondary"], variant="body", _style=truncate_style)
+                )
+            row_children.append(
+                col(children=body_children, gap="1", _style=body_col_style)
+            )
+            if is_non_empty_string(item_obj.get("badge", "")):
+                row_children.append(badge(item_obj["badge"], variant="outline"))
+            if item_action and is_non_empty_string(item_action.get("action", "")):
+                row_children.append(
+                    button(
+                        label=item_action.get("label", "Open"),
+                        action=item_action["action"],
+                        variant=item_action.get("variant", "ghost"),
+                    )
+                )
+            children.append(row(children=row_children, gap="3", align="center"))
+            if index < len(items) - 1:
+                children.append(divider())
+    outer_children = [col(children=children, gap="2")]
+    actions = block.get("actions")
+    if isinstance(actions, list) and len(actions) > 0:
+        outer_children.append(
+            row(children=build_actions(actions, []), justify="end", gap="3")
+        )
+    return [col(children=outer_children, gap="3")]
+
+
+BLOCK_REGISTRY = {
+    "labeled_field": build_labeled_field,
+    "action_row": build_action_row,
+    "key_value": build_key_value,
+    "metric_card": build_metric_card,
+    "status_badge": build_status_badge,
+    "avatar_header": build_avatar_header,
+    "empty_state": build_empty_state,
+    "alert_box": build_alert_box,
+    "search_box": build_search_box,
+    "divider": build_divider_block,
+    "text_block": build_text_block,
+    "markdown_block": build_markdown_block,
+    "form_section": build_form_section,
+    "data_table": build_data_table_section,
+    "metrics_row": build_metrics_row,
+    "detail_section": build_detail_section,
+    "settings_group": build_settings_group,
+    "chat_log": build_chat_log,
+    "terminal_panel": build_terminal_panel,
+    "step_tracker": build_step_tracker,
+    "media_grid": build_media_grid,
+    "chart_panel": build_chart_panel,
+    "chart_with_header": build_chart_with_header,
+    "chart_legend_card": build_chart_legend_card,
+    "chart_stat_row": build_chart_stat_row,
+    "chart_dashboard": build_chart_dashboard,
+    "chart_detail": build_chart_detail,
+    "list_section": build_list_section,
+}
 
 
 class FormBuilder(PatternBuilder):
@@ -1586,19 +2377,7 @@ class ChartBuilder(PatternBuilder):
         variant = spec["variant"]
         data = spec["data"]
         chart_props = {}
-        for key in (
-            "xKey",
-            "series",
-            "labelKey",
-            "valueKey",
-            "stacked",
-            "horizontal",
-            "donut",
-            "showGrid",
-            "showLegend",
-            "showTooltip",
-            "animate",
-        ):
+        for key in CHART_OPTIONAL_PROPS:
             if key in spec:
                 chart_props[key] = spec[key]
 
@@ -1618,6 +2397,51 @@ class ChartBuilder(PatternBuilder):
         )
 
 
+class ComposeBuilder(PatternBuilder):
+    def validate(self, spec):
+        body = spec.get("body")
+        if not isinstance(body, list) or len(body) == 0:
+            raise ComposeError(
+                "MISSING_FIELD",
+                "'body' must be a non-empty array for compose pattern",
+                "spec_validation",
+                1,
+            )
+        for index, block in enumerate(body):
+            ensure_object(block, "'body[{}]' must be an object".format(index))
+            use = block.get("use")
+            if not is_non_empty_string(use):
+                raise ComposeError(
+                    "MISSING_FIELD",
+                    "'body[{}].use' is required".format(index),
+                    "spec_validation",
+                    1,
+                )
+            if use not in BLOCK_REGISTRY:
+                available = ", ".join(sorted(BLOCK_REGISTRY.keys()))
+                raise ComposeError(
+                    "BLOCK_NOT_FOUND",
+                    "Block '{}' not found at body[{}]. Available: {}".format(
+                        use, index, available
+                    ),
+                    "spec_validation",
+                    1,
+                )
+
+    def build(self, spec):
+        content_children = []
+        for block in spec["body"]:
+            builder_fn = BLOCK_REGISTRY[block["use"]]
+            nodes = builder_fn(block)
+            content_children.extend(nodes)
+        return wrap_in_projection(
+            title=spec["title"],
+            content_children=content_children,
+            size=spec.get("size", "auto"),
+            theme=spec.get("theme"),
+        )
+
+
 PATTERN_REGISTRY = {
     "form": FormBuilder(),
     "data_table": DataTableBuilder(),
@@ -1634,6 +2458,7 @@ PATTERN_REGISTRY = {
     "progress_tracker": ProgressTrackerBuilder(),
     "media_gallery": MediaGalleryBuilder(),
     "chart": ChartBuilder(),
+    "compose": ComposeBuilder(),
 }
 
 

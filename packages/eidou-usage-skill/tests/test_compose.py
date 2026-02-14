@@ -194,6 +194,223 @@ class TestCompose(unittest.TestCase):
         self.assertTrue(has_type(data, "markdown"))
         self.assertTrue(has_type(data, "scroll"))
 
+    def test_compose_basic(self):
+        """Compose pattern with mixed molecules and organisms."""
+        spec = {
+            "pattern": "compose",
+            "title": "Dashboard",
+            "body": [
+                {"use": "text_block", "content": "Welcome"},
+                {
+                    "use": "metrics_row",
+                    "metrics": [
+                        {"label": "CPU", "value": "42%"},
+                        {"label": "Mem", "value": "2.1GB"},
+                    ],
+                },
+                {"use": "divider"},
+                {
+                    "use": "action_row",
+                    "actions": [
+                        {
+                            "label": "Refresh",
+                            "action": "refresh",
+                            "variant": "primary",
+                        }
+                    ],
+                },
+            ],
+        }
+        code, out, err = self.run_compose(json.dumps(spec))
+        self.assertEqual(code, 0, f"compose failed: {err}")
+        v_code, v_out, _ = self.validate_output(out)
+        self.assertEqual(v_code, 0, f"validate failed: {v_out}")
+        self.assertIn("Validation Result: PASS", v_out)
+
+    def test_compose_all_molecules(self):
+        """Every molecule block composes and validates."""
+        spec = {
+            "pattern": "compose",
+            "title": "All Molecules",
+            "body": [
+                {"use": "labeled_field", "label": "Name", "name": "name"},
+                {"use": "action_row", "actions": [{"label": "Go", "action": "go"}]},
+                {"use": "key_value", "key": "Version", "value": "1.0"},
+                {"use": "metric_card", "label": "CPU", "value": "73%"},
+                {"use": "status_badge", "label": "Online", "status": "ok"},
+                {"use": "avatar_header", "name": "Souta"},
+                {"use": "empty_state", "title": "Nothing here"},
+                {"use": "alert_box", "message": "Heads up!"},
+                {"use": "search_box", "name": "q"},
+                {"use": "divider"},
+                {"use": "text_block", "content": "Hello"},
+                {"use": "markdown_block", "content": "## Hi"},
+                {
+                    "use": "chart_with_header",
+                    "title": "Revenue",
+                    "variant": "line",
+                    "data": [{"month": "Jan", "revenue": 100}],
+                },
+                {
+                    "use": "chart_legend_card",
+                    "label": "Revenue",
+                    "value": "$4,200",
+                    "color": "#7CFF00",
+                },
+                {"use": "chart_stat_row", "label": "Total", "value": "$24,000"},
+            ],
+        }
+        code, out, err = self.run_compose(json.dumps(spec))
+        self.assertEqual(code, 0, f"compose failed: {err}")
+        v_code, v_out, _ = self.validate_output(out)
+        self.assertEqual(v_code, 0, f"validate failed: {v_out}")
+        self.assertIn("Validation Result: PASS", v_out)
+
+    def test_compose_all_organisms(self):
+        """Every organism block composes and validates."""
+        spec = {
+            "pattern": "compose",
+            "title": "All Organisms",
+            "body": [
+                {
+                    "use": "form_section",
+                    "fields": [{"name": "x", "label": "X", "type": "text"}],
+                },
+                {"use": "data_table", "columns": [{"key": "a"}], "rows": [{"a": "1"}]},
+                {"use": "metrics_row", "metrics": [{"label": "M", "value": "1"}]},
+                {"use": "detail_section", "fields": [{"label": "K", "value": "V"}]},
+                {
+                    "use": "settings_group",
+                    "title": "G",
+                    "settings": [{"name": "s", "label": "S", "type": "toggle"}],
+                },
+                {"use": "chat_log", "messages": [{"sender": "A", "content": "hi"}]},
+                {"use": "terminal_panel", "lines": ["$ echo hi"]},
+                {
+                    "use": "step_tracker",
+                    "steps": [{"label": "Build", "status": "complete"}],
+                },
+                {"use": "media_grid", "items": [{"src": "https://example.com/1.png"}]},
+                {"use": "chart_panel", "variant": "bar", "data": [{"x": 1, "y": 2}]},
+                {
+                    "use": "chart_dashboard",
+                    "charts": [
+                        {
+                            "title": "CPU",
+                            "variant": "line",
+                            "data": [{"t": 1, "v": 50}],
+                        }
+                    ],
+                },
+                {
+                    "use": "chart_detail",
+                    "title": "Revenue",
+                    "variant": "bar",
+                    "data": [{"q": "Q1", "rev": 100}],
+                    "stats": [{"label": "Total", "value": "$100"}],
+                },
+                {"use": "list_section", "items": [{"primary": "Item 1"}]},
+            ],
+        }
+        code, out, err = self.run_compose(json.dumps(spec))
+        self.assertEqual(code, 0, f"compose failed: {err}")
+        v_code, v_out, _ = self.validate_output(out)
+        self.assertEqual(v_code, 0, f"validate failed: {v_out}")
+        self.assertIn("Validation Result: PASS", v_out)
+
+    def test_compose_missing_body(self):
+        """Compose pattern requires body array."""
+        spec = {"pattern": "compose", "title": "Empty"}
+        code, _, err = self.run_compose(json.dumps(spec))
+        self.assertEqual(code, 1)
+        payload = json.loads(err)
+        self.assertEqual(payload["error"], "MISSING_FIELD")
+
+    def test_compose_unknown_block(self):
+        """Unknown block name in body raises error."""
+        spec = {
+            "pattern": "compose",
+            "title": "Bad",
+            "body": [{"use": "nonexistent_widget"}],
+        }
+        code, _, err = self.run_compose(json.dumps(spec))
+        self.assertEqual(code, 1)
+        payload = json.loads(err)
+        self.assertEqual(payload["error"], "BLOCK_NOT_FOUND")
+
+    def test_compose_chart_blocks(self):
+        """Chart molecules and organisms compose and validate."""
+        spec = {
+            "pattern": "compose",
+            "title": "Chart Blocks",
+            "body": [
+                {
+                    "use": "chart_dashboard",
+                    "metrics": [{"label": "Users", "value": "1.2k"}],
+                    "charts": [
+                        {
+                            "title": "Trend A",
+                            "variant": "line",
+                            "data": [
+                                {"x": "Jan", "y": 10},
+                                {"x": "Feb", "y": 20},
+                            ],
+                        },
+                        {
+                            "title": "Trend B",
+                            "variant": "bar",
+                            "data": [{"x": "Q1", "y": 30}],
+                        },
+                    ],
+                    "columns": 2,
+                    "actions": [{"label": "Export", "action": "export"}],
+                },
+                {"use": "divider"},
+                {
+                    "use": "chart_detail",
+                    "title": "Revenue",
+                    "variant": "area",
+                    "data": [
+                        {"month": "Jan", "revenue": 4200},
+                        {"month": "Feb", "revenue": 5100},
+                    ],
+                    "xKey": "month",
+                    "series": ["revenue"],
+                    "stats": [
+                        {"label": "Total", "value": "$9,300"},
+                        {"label": "Average", "value": "$4,650"},
+                    ],
+                    "actions": [{"label": "Download", "action": "download_csv"}],
+                },
+                {
+                    "use": "chart_legend_card",
+                    "label": "Revenue",
+                    "value": "$9,300",
+                    "color": "#7CFF00",
+                    "trend": "+12%",
+                },
+                {
+                    "use": "chart_legend_card",
+                    "label": "Cost",
+                    "value": "$5,200",
+                    "color": "#00D4AA",
+                },
+                {"use": "chart_stat_row", "label": "Profit Margin", "value": "44%"},
+                {
+                    "use": "chart_with_header",
+                    "title": "Simple Chart",
+                    "variant": "pie",
+                    "data": [{"cat": "A", "val": 60}, {"cat": "B", "val": 40}],
+                    "badge": "Live",
+                },
+            ],
+        }
+        code, out, err = self.run_compose(json.dumps(spec))
+        self.assertEqual(code, 0, f"compose failed: {err}")
+        v_code, v_out, _ = self.validate_output(out)
+        self.assertEqual(v_code, 0, f"validate failed: {v_out}")
+        self.assertIn("Validation Result: PASS", v_out)
+
     def test_unknown_pattern(self):
         spec = {"pattern": "fancy_table", "title": "Nope"}
         code, _, err = self.run_compose(json.dumps(spec))
