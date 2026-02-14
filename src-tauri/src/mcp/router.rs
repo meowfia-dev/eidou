@@ -19,6 +19,7 @@ use rmcp::{tool, tool_handler, tool_router};
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde_json::{json, Value};
+use std::borrow::Cow;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -110,11 +111,33 @@ impl ServerHandler for EidouRouter {
     }
 }
 
-#[derive(Deserialize, JsonSchema)]
+#[derive(Deserialize)]
 #[serde(untagged)]
 pub enum UiInput {
     String(String),
     Object(Value),
+}
+
+// Manual JsonSchema: inline anyOf without $ref/$defs.
+// Many MCP clients (including OpenCode) do not resolve $ref within
+// inputSchema, so the auto-derived schema with $defs breaks tool calls.
+impl JsonSchema for UiInput {
+    fn schema_name() -> Cow<'static, str> {
+        "UiInput".into()
+    }
+
+    fn inline_schema() -> bool {
+        true
+    }
+
+    fn json_schema(_generator: &mut schemars::SchemaGenerator) -> schemars::Schema {
+        schemars::json_schema!({
+            "anyOf": [
+                { "type": "string", "description": "EUIP JSON as a string" },
+                { "type": "object", "description": "EUIP Component Tree" }
+            ]
+        })
+    }
 }
 
 impl UiInput {
@@ -793,5 +816,51 @@ mod tests {
         let val = args.ui.try_into_value().unwrap();
         assert!(val.is_object());
         assert_eq!(val["type"], "projection");
+    }
+
+    #[test]
+    fn test_show_widget_args_schema_no_refs() {
+        use schemars::generate::SchemaSettings;
+
+        let mut settings = SchemaSettings::draft2020_12();
+        settings.transforms = vec![Box::new(schemars::transform::AddNullable::default())];
+        let generator = settings.into_generator();
+        let schema = generator.into_root_schema_for::<ShowWidgetArgs>();
+        let json = serde_json::to_string_pretty(&schema).unwrap();
+
+        // Schema must NOT contain $ref or $defs (breaks MCP clients)
+        assert!(
+            !json.contains("\"$ref\""),
+            "Schema must not use $ref (MCP clients cannot resolve it)"
+        );
+        assert!(!json.contains("\"$defs\""), "Schema must not contain $defs");
+
+        // ui property must have inline anyOf
+        let val: Value = serde_json::from_str(&json).unwrap();
+        let ui_prop = &val["properties"]["ui"];
+        assert!(
+            ui_prop.get("anyOf").is_some(),
+            "ui property must have inline anyOf"
+        );
+    }
+
+    #[test]
+    fn test_show_widget_and_wait_args_schema_no_refs() {
+        use schemars::generate::SchemaSettings;
+
+        let mut settings = SchemaSettings::draft2020_12();
+        settings.transforms = vec![Box::new(schemars::transform::AddNullable::default())];
+        let generator = settings.into_generator();
+        let schema = generator.into_root_schema_for::<ShowWidgetAndWaitArgs>();
+        let json = serde_json::to_string_pretty(&schema).unwrap();
+
+        assert!(
+            !json.contains("\"$ref\""),
+            "ShowWidgetAndWaitArgs schema must not use $ref"
+        );
+        assert!(
+            !json.contains("\"$defs\""),
+            "ShowWidgetAndWaitArgs schema must not contain $defs"
+        );
     }
 }

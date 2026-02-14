@@ -2463,17 +2463,24 @@ PATTERN_REGISTRY = {
 
 
 def ensure_euip_structure(data):
+    """Ensure EUIP hierarchy: projection -> field (exactly 1) -> content.
+
+    Aligns with the backend EUIP validator (SINGLE_FIELD rule) and
+    the JSON Schema (/specification/v0_1/json/root.json: maxItems 1).
+    """
     if data.get("type") != "projection":
         data = projection("Generated Widget", size="auto", children=[data])
     children = data.get("children", [])
     if not isinstance(children, list):
         children = []
     if (
-        not children
-        or not isinstance(children[0], dict)
-        or children[0].get("type") != "field"
+        len(children) == 1
+        and isinstance(children[0], dict)
+        and children[0].get("type") == "field"
     ):
-        data["children"] = [field_node(children=children)]
+        return data
+    # Wrap all children into a single field
+    data["children"] = [field_node(children=children)]
     return data
 
 

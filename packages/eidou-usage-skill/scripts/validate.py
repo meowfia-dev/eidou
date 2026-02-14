@@ -238,22 +238,30 @@ def main():
             "The root element of any EUIP widget must be a projection.",
         )
 
-    # R001: Check ALL Children are Fields
+    # R001: Projection must have exactly 1 child of type 'field'
+    # This aligns with the backend EUIP validator (SINGLE_FIELD rule)
+    # and the JSON Schema (/specification/v0_1/json/root.json: maxItems 1)
     children = data.get("children")
     if isinstance(children, list):
         if len(children) == 0:
-            report.error("root", "Projection must have at least one child (Field)")
+            report.error("root", "Projection must have exactly 1 child (Field)")
+        elif len(children) > 1:
+            report.error(
+                "root.children",
+                f"R001: Projection must have exactly 1 child, found {len(children)}",
+                "EUIP hierarchy: projection -> field (exactly 1) -> content.",
+            )
         else:
-            for i, child in enumerate(children):
-                if isinstance(child, dict):
-                    if child.get("type") != "field":
-                        report.error(
-                            f"root.children[{i}]",
-                            f"R001: Direct projection child must be type 'field', got '{child.get('type')}'",
-                            "All content must be wrapped in a Field component for OS adaptation.",
-                        )
-                else:
-                    report.error(f"root.children[{i}]", "Child is not an object")
+            child = children[0]
+            if isinstance(child, dict):
+                if child.get("type") != "field":
+                    report.error(
+                        "root.children[0]",
+                        f"R001: Direct projection child must be type 'field', got '{child.get('type')}'",
+                        "All content must be wrapped in a Field component for OS adaptation.",
+                    )
+            else:
+                report.error("root.children[0]", "Child is not an object")
     elif children is not None:  # defined but not list
         report.error("root.children", "Children must be an array")
     else:
