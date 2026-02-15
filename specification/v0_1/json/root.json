@@ -15,7 +15,20 @@
             { "type": "string", "enum": ["sm", "md", "lg", "xl", "full", "auto"] },
             { 
               "type": "object", 
-              "properties": { "width": { "type": "number" }, "height": { "type": "number" } },
+              "properties": {
+                "width": {
+                  "oneOf": [
+                    { "type": "number" },
+                    { "type": "string", "const": "auto" }
+                  ]
+                },
+                "height": {
+                  "oneOf": [
+                    { "type": "number" },
+                    { "type": "string", "const": "auto" }
+                  ]
+                }
+              },
               "required": ["width", "height"]
             },
             {

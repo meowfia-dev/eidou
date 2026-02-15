@@ -137,7 +137,7 @@ When a widget structure violates these rules, the backend returns an error:
 ### `projection` (Root)
 - **Strict Rule:** `children` MUST contain exactly ONE `field` node.
 - `title` (string): Window title.
-- `size` (string | object): `sm`, `md`, `lg`, `xl`, `full`, `auto`, `{ width, height }`, or `{ ratio: "16:9", width?: number, maxWidth?: number, base?: "sm"|"md"|"lg"|"xl" }`.
+- `size` (string | object): `sm`, `md`, `lg`, `xl`, `full`, `auto`, `{ width: number|"auto", height: number|"auto" }` (including hybrid per-axis auto), or `{ ratio: "16:9", width?: number, maxWidth?: number, base?: "sm"|"md"|"lg"|"xl" }`.
 - `position` (object): Window positioning.
   - `anchor` (enum): `center`, `top-right`, `bottom-right`, `top-left`, `bottom-left`, `custom`.
   - `offset` (object, optional): `{ x, y }` coordinates.
