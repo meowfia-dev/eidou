@@ -72,6 +72,7 @@ const ASPECT_RATIO_MIN = 1 / 5; // width:height < 1:5 = too tall/narrow
 const ASPECT_RATIO_MAX = 5;     // width:height > 5:1 = too wide/short
 const SPAGHETTI_MIN_WIDTH = 320;
 const SPAGHETTI_MIN_HEIGHT = 120;
+const HYBRID_CORRECTION_THRESHOLD = 1;
 
 // ---------------------------------------------------------------------------
 // Screen Info
@@ -174,6 +175,36 @@ export function needsMeasurement(parsed: ParsedSize): boolean {
 /** Check if size is fully fixed (no measurement needed). */
 export function isFullyFixed(parsed: ParsedSize): boolean {
   return parsed.width !== null && parsed.height !== null;
+}
+
+/** Check if exactly one axis is auto (hybrid sizing). */
+export function isHybridAutoAxis(parsed: ParsedSize): boolean {
+  const autoAxisCount = Number(parsed.width === null) + Number(parsed.height === null);
+  return autoAxisCount === 1;
+}
+
+/**
+ * Decide whether a post-resize hybrid correction should be applied.
+ *
+ * Correction only applies when the auto axis needs to grow beyond a small
+ * threshold. Shrinks are ignored to avoid jitter.
+ */
+export function shouldApplyHybridCorrection(
+  current: ResolvedSize,
+  corrected: ResolvedSize,
+  parsed: ParsedSize,
+): boolean {
+  if (!isHybridAutoAxis(parsed)) return false;
+
+  if (parsed.width === null) {
+    return corrected.width > current.width + HYBRID_CORRECTION_THRESHOLD;
+  }
+
+  if (parsed.height === null) {
+    return corrected.height > current.height + HYBRID_CORRECTION_THRESHOLD;
+  }
+
+  return false;
 }
 
 // ---------------------------------------------------------------------------

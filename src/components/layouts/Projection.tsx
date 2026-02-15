@@ -47,11 +47,14 @@ import {
   type SizeSpec,
   parseSizeSpec,
   needsMeasurement,
+  isHybridAutoAxis,
   resolveFinalSize,
+  shouldApplyHybridCorrection,
   getScreenInfo,
 } from '../../lib/size-constraints';
 import { ProjectionSizingProvider } from '../../lib/projection-sizing';
 import { requestProjectionResize } from '../../lib/projection-window';
+import { diagnoseInteractiveReachability } from '../../lib/reachability';
 import { GhostErrorBoundary } from '../system/ErrorBoundary';
 import { Seed } from '../system/Seed';
 import type { TransitionDefinition } from '../providers/ThemeProvider';
@@ -299,6 +302,12 @@ function resolveVariant(variant: string): string {
   return KNOWN_VARIANTS.has(variant) ? variant : 'default';
 }
 
+function waitForAnimationFrame(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => resolve());
+  });
+}
+
 /**
  * Build the CSS animation shorthand for enter/exit.
  * Maps to keyframes defined in index.css: eidou-enter-{variant}, eidou-exit-{variant}
@@ -467,35 +476,92 @@ export const Projection: React.FC<ProjectionProps> = ({ size, transition, themeT
     const screen = getScreenInfo();
     const finalSize = resolveFinalSize(size, state.measuredSize, screen);
 
+    const canRunHybridCorrection = isHybridAutoAxis(parsed);
+
     // Store for ResizeObserver comparison
     lastResizedSize.current = finalSize;
 
-    // Call Rust to resize the OS window
-    adjustWindowSize(finalSize.width, finalSize.height)
-      .then(() => {
-        dispatch({ type: 'RESIZE_CONFIRMED' });
-      })
-      .catch((err) => {
+    let cancelled = false;
+
+    const runShapingResize = async () => {
+      try {
+        // First pass resize from ghost measurement
+        await adjustWindowSize(finalSize.width, finalSize.height);
+
+        let appliedSize = finalSize;
+
+        // Hybrid-only correction pass (at most once): account for runtime
+        // width rounding after Tauri resize that can increase wrapped height.
+        if (canRunHybridCorrection) {
+          await waitForAnimationFrame();
+
+          const contentEl = contentRef.current;
+          if (contentEl) {
+            const runtimeMeasured = {
+              width: contentEl.scrollWidth,
+              height: contentEl.scrollHeight,
+            };
+            const correctedSize = resolveFinalSize(size, runtimeMeasured, screen);
+
+            if (shouldApplyHybridCorrection(finalSize, correctedSize, parsed)) {
+              await adjustWindowSize(correctedSize.width, correctedSize.height);
+              appliedSize = correctedSize;
+            }
+          }
+        }
+
+        lastResizedSize.current = appliedSize;
+      } catch (err) {
         if (import.meta.env.DEV) {
           console.error('[Projection] adjust_projection_size failed:', err);
         }
-        // Still proceed -- window keeps its current size
-        dispatch({ type: 'RESIZE_CONFIRMED' });
-      });
+      } finally {
+        if (!cancelled) {
+          // Always proceed. If resize failed, window keeps current size.
+          dispatch({ type: 'RESIZE_CONFIRMED' });
+        }
+      }
+    };
+
+    runShapingResize();
+
+    return () => {
+      cancelled = true;
+    };
   }, [state.phase, size, state.measuredSize, hasSeed, parsed.width, parsed.height]);
 
   // -- REVEALING: play reveal (clip-path expansion) animation ---------------
   useEffect(() => {
     if (state.phase !== 'REVEALING') return;
 
-    // Non-seed widgets: skip reveal animation, go straight to ENTERING.
-    // Toasts/widgets without seed get: MOUNTING -> SHAPING(instant) -> REVEALING(instant) -> ENTERING.
-    if (!hasSeed) {
-      dispatch({ type: 'REVEAL_ANIMATION_COMPLETE' });
-      return;
-    }
+    let el: HTMLDivElement | null = null;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    const frame = requestAnimationFrame(() => {
+      if (import.meta.env.DEV && contentRef.current) {
+        const report = diagnoseInteractiveReachability(contentRef.current);
+        if (report.unreachable.length > 0) {
+          console.warn('[Projection] Unreachable interactive elements detected before reveal', report);
+        }
+      }
 
-    const el = revealRef.current;
+      // Non-seed widgets: skip reveal animation, go straight to ENTERING.
+      // Toasts/widgets without seed get: MOUNTING -> SHAPING(instant) -> REVEALING(instant) -> ENTERING.
+      if (!hasSeed) {
+        dispatch({ type: 'REVEAL_ANIMATION_COMPLETE' });
+        return;
+      }
+
+      el = revealRef.current;
+      if (el) {
+        el.addEventListener('animationend', handleAnimationEnd);
+      }
+
+      // Fallback timeout in case animationend never fires.
+      const revealMs = resolveRevealDuration(seedSpeed, resolveVariant(seedVariant), themeTransitions);
+      timeout = setTimeout(() => {
+        dispatch({ type: 'REVEAL_ANIMATION_COMPLETE' });
+      }, revealMs + ANIMATION_TIMEOUT_BUFFER);
+    });
 
     const handleAnimationEnd = (e: AnimationEvent) => {
       if (e.animationName.startsWith('eidou-reveal-')) {
@@ -503,19 +569,10 @@ export const Projection: React.FC<ProjectionProps> = ({ size, transition, themeT
       }
     };
 
-    if (el) {
-      el.addEventListener('animationend', handleAnimationEnd);
-    }
-
-    // Fallback timeout in case animationend never fires.
-    const revealMs = resolveRevealDuration(seedSpeed, resolveVariant(seedVariant), themeTransitions);
-    const timeout = setTimeout(() => {
-      dispatch({ type: 'REVEAL_ANIMATION_COMPLETE' });
-    }, revealMs + ANIMATION_TIMEOUT_BUFFER);
-
     return () => {
+      cancelAnimationFrame(frame);
       if (el) el.removeEventListener('animationend', handleAnimationEnd);
-      clearTimeout(timeout);
+      if (timeout) clearTimeout(timeout);
     };
   }, [state.phase, seedSpeed, seedVariant, themeTransitions, hasSeed]);
 
