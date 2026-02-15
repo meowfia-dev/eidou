@@ -55,6 +55,15 @@ python "$env:SKILL_DIR\compose.py" --input intent.json
 - Validation gate: `validate.py`
 - Output must satisfy `projection -> field -> content` and pass `validate.py`.
 
+### Reserved Close Action
+
+- Use `_eidou_sys_close` for buttons that should close the projection.
+- Compose normalizes explicit close intents in action rows:
+  - `action: "close"` -> `_eidou_sys_close`
+  - `action: "eidou:close"` -> `_eidou_sys_close`
+  - `label: "Close"` with missing/empty `action` -> `_eidou_sys_close`
+- Non-close custom actions are preserved as provided.
+
 ## CLI Contract
 
 <!-- SKILL_VARIANT:unix:start -->
@@ -108,7 +117,7 @@ Common fields:
 - `pattern` (required)
 - `title` (required)
 - `description` (optional)
-- `size` (optional, default `auto`; presets: `sm`, `md`, `lg`, `xl`, `full`, `auto`; ratio object: `{"ratio":"16:9","width":960,"maxWidth":1200,"base":"lg"}`)
+- `size` (optional, default `auto`; presets: `sm`, `md`, `lg`, `xl`, `full`, `auto`; object: `{"width":1024,"height":"auto"}`; ratio object: `{"ratio":"16:9","width":960,"maxWidth":1200,"base":"lg"}`)
 - `theme` (optional projection theme override)
 
 Pattern-specific fields are below.
@@ -133,7 +142,10 @@ Pattern-specific fields are below.
 | `media_gallery` | Grid image gallery | `items` |
 | `chart` | Data visualization (line/bar/pie/area) | `variant`, `data` |
 
+Profile avatar behavior: `profile` always emits an `avatar` atom. `avatar` may be an object (`{ "src": "...", ... }`) or a string URL shorthand. Compose derives a 1-2 character fallback from `name` whenever `avatar.fallback` is missing and sets `alt` to `<name> avatar` when not provided.
+
 Default sizing note: `media_gallery` defaults to a ratio size (`16:9`, width `1024`, maxWidth `1200`) to keep image-heavy content stable without oversized auto windows.
+Compose layouts default to fit-content style hybrid sizing (`{"width":...,"height":"auto"}`) to avoid wasted vertical whitespace.
 
 ## Compose Pattern (Build Your Own)
 
@@ -144,16 +156,82 @@ Each block in `body[]` is a `{ "use": "<block_name>", ...params }` directive.
 {
   "pattern": "compose",
   "title": "Server Dashboard",
+  "layout": "sidebar",
+  "size": "dashboard",
   "body": [
-    { "use": "metrics_row", "metrics": [{"label": "CPU", "value": "73%"}, {"label": "Mem", "value": "2.1GB"}] },
-    { "use": "chart_panel", "variant": "line", "data": [{"month": "Jan", "revenue": 4200}] },
-    { "use": "action_row", "actions": [{"label": "Refresh", "action": "refresh"}] }
+    { "slot": "main", "use": "chart_panel", "variant": "line", "data": [{"month": "Jan", "revenue": 4200}] },
+    { "slot": "side", "use": "metric_card", "label": "CPU", "value": "73%" },
+    { "slot": "side", "use": "metric_card", "label": "Mem", "value": "2.1GB" }
   ]
 }
 ```
 
-Blocks are rendered **top-to-bottom** in a vertical stack inside a single Shard.
-You can mix molecules (small pieces) and organisms (functional sections) freely.
+### Layout Presets
+
+Pick a layout to control how blocks are arranged spatially.
+Assign blocks to named slots. Multiple blocks in the same slot stack vertically.
+If no `slot` is specified, blocks go to the first slot of the layout.
+
+| Layout | Slots | Default Size | Description |
+|---|---|---|---|
+| `stack` | `main` | `auto` | Vertical stack (default). All blocks top-to-bottom. |
+| `sidebar` | `main`, `side` | `{"width":1024,"height":"auto"}` | 2/3 main + 1/3 side rail. |
+| `split` | `left`, `right` | `{"width":1024,"height":"auto"}` | 50/50 equal halves. |
+| `grid-2x2` | `slot-a`, `slot-b`, `slot-c`, `slot-d` | `{"width":640,"height":"auto"}` | 2x2 equal grid. |
+| `bento` | `slot-a`, `slot-b`, `slot-c` | `{"width":1024,"height":"auto"}` | 1 large (slot-a spans 2x2) + 2 small. |
+| `hero` | `hero`, `content` | `{"width":480,"height":"auto"}` | Large hero area + content below. |
+| `triple` | `left`, `center`, `right` | `{"width":1024,"height":"auto"}` | Three equal columns. |
+| `dashboard` | `metrics`, `main`, `footer` | `{"width":1024,"height":"auto"}` | KPI row + main + optional footer. |
+
+Use explicit `size` (for example `"dashboard"`) when you want a semantic ratio preset instead of fit-content defaults.
+
+#### Layout ASCII Diagrams
+
+**sidebar:**
+```
++------------------+--------+
+|      main        |  side  |
++------------------+--------+
+```
+
+Note: If `main` contains a single `chart_panel`, it is vertically centered in the available height.
+Multi-block content (profiles, docs) stays top-aligned.
+
+**bento:**
+```
++------------------+--------+
+|                  | slot-b |
+|     slot-a       +--------+
+|                  | slot-c |
++------------------+--------+
+```
+
+**dashboard:**
+```
++---------------------------+
+| metrics  metrics  metrics |
++---------------------------+
+|          main             |
++---------------------------+
+|         footer            |
++---------------------------+
+```
+
+### Size Presets
+
+Control window dimensions with semantic size names.
+Explicit `size` always overrides the layout's fit-content default.
+
+| Name | Ideal For |
+|---|---|
+| `dashboard` | Multi-chart, metrics overview (16:9, 1024px) |
+| `card` | Single card, form, detail (4:3, 480px) |
+| `widescreen` | Comparison, wide layouts (21:9, 1024px) |
+| `portrait` | Tall list, chat, profile (3:4, 480px) |
+| `square` | Grid, single chart (1:1, 640px) |
+| `compact` | Simple message, alert (320x480) |
+
+You can also use raw sizes: `auto`, `sm`, `md`, `lg`, `xl`, `full`, hybrid objects (`{"width":1024,"height":"auto"}`), or ratio objects.
 
 ### Molecules (Small Functional Units)
 
@@ -195,15 +273,14 @@ You can mix molecules (small pieces) and organisms (functional sections) freely.
 
 ### Recipes (Suggested Combos)
 
-- **Dashboard**: `metrics_row` + `chart_panel` + `action_row`
-- **Master-Detail**: `data_table` + `detail_section`
-- **Form + Preview**: `form_section` + `markdown_block`
-- **Log Monitor**: `terminal_panel` + `step_tracker`
-- **Profile Page**: `avatar_header` + `detail_section` + `settings_group`
-- **Search Results**: `search_box` + `list_section` + `action_row`
-- **Analytics Dashboard**: `metrics_row` + `chart_dashboard`
-- **Chart Deep Dive**: `chart_detail` + `action_row`
-- **Chart + Legends**: `chart_with_header` + row of `chart_legend_card`s
+- **Dashboard**: `layout: "dashboard"` with `metrics_row` in `metrics` + `chart_panel` in `main`
+- **Sidebar Analysis**: `layout: "sidebar"` with `chart_panel` in `main` + `metric_card`s in `side`
+- **Comparison**: `layout: "split"` with `chart_panel` in `left` + `chart_panel` in `right`
+- **Bento Overview**: `layout: "bento"` with main chart in `slot-a` + metrics in `slot-b`/`slot-c`
+- **KPI Grid**: `layout: "grid-2x2"` with `metric_card` in each slot
+- **Hero Feature**: `layout: "hero"` with `chart_panel` in `hero` + `text_block` in `content`
+- **Simple Stack**: no layout (default) with `text_block` + `action_row`
+- **Form + Preview**: `form_section` + `markdown_block` (stack layout)
 
 ### Compose One-Liners
 
@@ -212,7 +289,11 @@ You can mix molecules (small pieces) and organisms (functional sections) freely.
 ```
 
 ```json
-{"pattern":"compose","title":"Stats","body":[{"use":"metrics_row","metrics":[{"label":"Users","value":"1.2k"}]},{"use":"divider"},{"use":"list_section","items":[{"primary":"Event A"},{"primary":"Event B"}]}]}
+{"pattern":"compose","title":"Dashboard","layout":"sidebar","size":"dashboard","body":[{"slot":"main","use":"chart_panel","variant":"pie","data":[{"cat":"A","val":60},{"cat":"B","val":40}]},{"slot":"side","use":"metric_card","label":"Total","value":"100"}]}
+```
+
+```json
+{"pattern":"compose","title":"KPIs","layout":"grid-2x2","size":"square","body":[{"slot":"slot-a","use":"metric_card","label":"CPU","value":"73%"},{"slot":"slot-b","use":"metric_card","label":"RAM","value":"2.1GB"},{"slot":"slot-c","use":"metric_card","label":"Disk","value":"45%"},{"slot":"slot-d","use":"metric_card","label":"Net","value":"120Mbps"}]}
 ```
 
 ## Semantic Field Type Mapping

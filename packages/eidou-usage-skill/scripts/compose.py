@@ -31,6 +31,17 @@ class PatternBuilder:
 
 PROJECTION_SIZE_PRESETS = frozenset(["auto", "sm", "md", "lg", "xl", "full"])
 
+# --- Semantic Size Presets (P008) ---
+# These map semantic names to ratio objects the backend already supports.
+SEMANTIC_SIZE_PRESETS = {
+    "dashboard": {"ratio": "16:9", "width": 1024, "maxWidth": 1200},
+    "card": {"ratio": "4:3", "width": 480, "maxWidth": 600},
+    "widescreen": {"ratio": "21:9", "width": 1024, "maxWidth": 1200},
+    "portrait": {"ratio": "3:4", "width": 480, "maxWidth": 600},
+    "square": {"ratio": "1:1", "width": 640, "maxWidth": 800},
+    "compact": "sm",
+}
+
 
 def normalize_projection_size(size):
     if isinstance(size, str) and size in PROJECTION_SIZE_PRESETS:
@@ -55,7 +66,15 @@ def normalize_projection_size(size):
 
         width = size.get("width")
         height = size.get("height")
-        if isinstance(width, (int, float)) and isinstance(height, (int, float)):
+        width_is_number = isinstance(width, (int, float)) and not isinstance(
+            width, bool
+        )
+        height_is_number = isinstance(height, (int, float)) and not isinstance(
+            height, bool
+        )
+        width_is_valid = width_is_number or width == "auto"
+        height_is_valid = height_is_number or height == "auto"
+        if width_is_valid and height_is_valid:
             return {"width": width, "height": height}
 
         return size
@@ -350,6 +369,8 @@ def status_color(status):
 
 
 def normalize_avatar_props(value, default_size=None):
+    if is_non_empty_string(value):
+        value = {"src": str(value)}
     if not isinstance(value, dict):
         return None
     props = {}
@@ -377,6 +398,18 @@ def normalize_avatar_props(value, default_size=None):
     return props
 
 
+def derive_avatar_fallback(name):
+    if not is_non_empty_string(name):
+        return "?"
+    tokens = [token for token in str(name).strip().split() if token]
+    if len(tokens) >= 2:
+        return (tokens[0][0] + tokens[1][0]).upper()
+    compact = "".join(ch for ch in str(name).strip() if ch.isalnum())
+    if compact:
+        return compact[:2].upper()
+    return "?"
+
+
 def build_actions(actions, default_actions):
     src = actions if isinstance(actions, list) and len(actions) > 0 else default_actions
     result = []
@@ -384,9 +417,16 @@ def build_actions(actions, default_actions):
         if not isinstance(action, dict):
             continue
         label = action.get("label", "Action")
+        label_text = str(label).strip()
         action_name = action.get("action")
-        if not is_non_empty_string(action_name):
-            action_name = "action_{}".format(label.lower().replace(" ", "_"))
+        if is_non_empty_string(action_name):
+            action_name = str(action_name).strip()
+            if action_name in ("close", "eidou:close"):
+                action_name = "_eidou_sys_close"
+        elif label_text.lower() == "close":
+            action_name = "_eidou_sys_close"
+        else:
+            action_name = "action_{}".format(label_text.lower().replace(" ", "_"))
         result.append(
             button(
                 label=str(label),
@@ -477,6 +517,211 @@ def wrap_in_projection(title, content_children, size="auto", theme=None):
             )
         ],
     )
+
+
+def wrap_layout_in_projection(title, layout_node, size="auto", theme=None):
+    """Wrap a pre-built layout node in the projection/field/shard hierarchy."""
+    return projection(
+        title=title,
+        size=size,
+        theme=theme,
+        children=[
+            field_node(
+                children=[shard(title=title, variant="glass", children=[layout_node])]
+            )
+        ],
+    )
+
+
+def resolve_size(size_value, layout_default="auto"):
+    """Resolve a size value: check semantic presets, then fall through."""
+    if size_value is not None:
+        if isinstance(size_value, str) and size_value in SEMANTIC_SIZE_PRESETS:
+            return SEMANTIC_SIZE_PRESETS[size_value]
+        return size_value
+    if isinstance(layout_default, str) and layout_default in SEMANTIC_SIZE_PRESETS:
+        return SEMANTIC_SIZE_PRESETS[layout_default]
+    return layout_default
+
+
+# --- Layout Build Functions (P008) ---
+
+
+def _build_stack(slots):
+    """Stack: vertical col. All blocks in 'main' slot."""
+    return col(children=slots.get("main", []), gap="4")
+
+
+def _node_contains_type(node, target_type):
+    if not isinstance(node, dict):
+        return False
+    if node.get("type") == target_type:
+        return True
+    children = node.get("children")
+    if isinstance(children, list):
+        for child in children:
+            if _node_contains_type(child, target_type):
+                return True
+    return False
+
+
+def _should_center_sidebar_main(main_nodes):
+    # Sidebar main is usually a featured panel when it's a single chart.
+    # For multi-block content (profiles, documents, etc.), top-aligned flow
+    # is more natural than vertical centering.
+    if not isinstance(main_nodes, list) or len(main_nodes) != 1:
+        return False
+    return _node_contains_type(main_nodes[0], "chart")
+
+
+def _build_sidebar(slots):
+    """Sidebar: 3-col grid, main spans 2, side spans 1."""
+    main_nodes = slots.get("main", [])
+    side_nodes = slots.get("side", [])
+    children = []
+    if main_nodes:
+        main_style = {"gridColumn": "span 2"}
+        if _should_center_sidebar_main(main_nodes):
+            main_style["alignSelf"] = "center"
+        children.append(
+            col(
+                children=main_nodes,
+                gap="4",
+                _style=main_style,
+            )
+        )
+    if side_nodes:
+        children.append(col(children=side_nodes, gap="4"))
+    return grid(columns=3, gap="4", children=children, _style={"minHeight": "100%"})
+
+
+def _build_split(slots):
+    """Split: 2-col grid, equal halves."""
+    left_nodes = slots.get("left", [])
+    right_nodes = slots.get("right", [])
+    children = []
+    if left_nodes:
+        children.append(col(children=left_nodes, gap="4"))
+    if right_nodes:
+        children.append(col(children=right_nodes, gap="4"))
+    return grid(columns=2, gap="4", children=children)
+
+
+def _build_grid_2x2(slots):
+    """Grid 2x2: 2-col, 4 equal cells."""
+    children = []
+    for slot_name in ("slot-a", "slot-b", "slot-c", "slot-d"):
+        nodes = slots.get(slot_name, [])
+        if nodes:
+            children.append(col(children=nodes, gap="4"))
+    return grid(columns=2, gap="4", children=children)
+
+
+def _build_bento(slots):
+    """Bento: 2/3 featured + 1/3 side column.
+
+    slot-a takes 2 of 3 grid columns (featured, vertically centered).
+    slot-b and slot-c flow naturally in a single side column (top-aligned).
+    No row splitting -- avoids the gap caused by 1fr 1fr when side content
+    is shorter than the featured area.
+    """
+    a_nodes = slots.get("slot-a", [])
+    b_nodes = slots.get("slot-b", [])
+    c_nodes = slots.get("slot-c", [])
+    children = []
+    if a_nodes:
+        children.append(
+            col(
+                children=a_nodes,
+                gap="4",
+                _style={"gridColumn": "span 2", "alignSelf": "center"},
+            )
+        )
+    side_nodes = b_nodes + c_nodes
+    if side_nodes:
+        children.append(col(children=side_nodes, gap="4"))
+    return grid(columns=3, gap="4", children=children, _style={"minHeight": "100%"})
+
+
+def _build_hero(slots):
+    """Hero: large hero area (flex-2) + content below (flex-1)."""
+    hero_nodes = slots.get("hero", [])
+    content_nodes = slots.get("content", [])
+    parts = []
+    if hero_nodes:
+        parts.append(col(children=hero_nodes, gap="4", _style={"flex": "2"}))
+    if content_nodes:
+        parts.append(col(children=content_nodes, gap="4", _style={"flex": "1"}))
+    return col(children=parts, gap="4")
+
+
+def _build_triple(slots):
+    """Triple: 3-col grid, equal columns."""
+    children = []
+    for slot_name in ("left", "center", "right"):
+        nodes = slots.get(slot_name, [])
+        if nodes:
+            children.append(col(children=nodes, gap="4"))
+    return grid(columns=3, gap="4", children=children)
+
+
+def _build_dashboard(slots):
+    """Dashboard: metrics row + main + optional footer."""
+    metrics_nodes = slots.get("metrics", [])
+    main_nodes = slots.get("main", [])
+    footer_nodes = slots.get("footer", [])
+    parts = []
+    if metrics_nodes:
+        parts.append(row(children=metrics_nodes, gap="4"))
+    if main_nodes:
+        parts.append(col(children=main_nodes, gap="4"))
+    if footer_nodes:
+        parts.append(col(children=footer_nodes, gap="4"))
+    return col(children=parts, gap="4")
+
+
+LAYOUT_PRESETS = {
+    "stack": {
+        "slots": ["main"],
+        "default_size": "auto",
+        "build": _build_stack,
+    },
+    "sidebar": {
+        "slots": ["main", "side"],
+        "default_size": {"width": 1024, "height": "auto"},
+        "build": _build_sidebar,
+    },
+    "split": {
+        "slots": ["left", "right"],
+        "default_size": {"width": 1024, "height": "auto"},
+        "build": _build_split,
+    },
+    "grid-2x2": {
+        "slots": ["slot-a", "slot-b", "slot-c", "slot-d"],
+        "default_size": {"width": 640, "height": "auto"},
+        "build": _build_grid_2x2,
+    },
+    "bento": {
+        "slots": ["slot-a", "slot-b", "slot-c"],
+        "default_size": {"width": 1024, "height": "auto"},
+        "build": _build_bento,
+    },
+    "hero": {
+        "slots": ["hero", "content"],
+        "default_size": {"width": 480, "height": "auto"},
+        "build": _build_hero,
+    },
+    "triple": {
+        "slots": ["left", "center", "right"],
+        "default_size": {"width": 1024, "height": "auto"},
+        "build": _build_triple,
+    },
+    "dashboard": {
+        "slots": ["metrics", "main", "footer"],
+        "default_size": {"width": 1024, "height": "auto"},
+        "build": _build_dashboard,
+    },
+}
 
 
 def build_labeled_field(block):
@@ -1912,12 +2157,19 @@ class ProfileBuilder(PatternBuilder):
     def build(self, spec):
         content_children = []
         avatar_props = normalize_avatar_props(spec.get("avatar"), default_size="xl")
-        if avatar_props:
-            if "shape" not in avatar_props:
-                avatar_props["shape"] = "circle"
-            content_children.append(
-                row(children=[avatar_atom(**avatar_props)], justify="center")
-            )
+        if not avatar_props:
+            avatar_props = {}
+        if "shape" not in avatar_props:
+            avatar_props["shape"] = "circle"
+        if "size" not in avatar_props:
+            avatar_props["size"] = "xl"
+        if not is_non_empty_string(avatar_props.get("alt")):
+            avatar_props["alt"] = "{} avatar".format(spec["name"])
+        if not is_non_empty_string(avatar_props.get("fallback")):
+            avatar_props["fallback"] = derive_avatar_fallback(spec["name"])
+        content_children.append(
+            row(children=[avatar_atom(**avatar_props)], justify="center")
+        )
 
         content_children.append(text(spec["name"], variant="h2", align="center"))
         if is_non_empty_string(spec.get("subtitle", "")):
@@ -2407,6 +2659,21 @@ class ComposeBuilder(PatternBuilder):
                 "spec_validation",
                 1,
             )
+
+        layout_name = spec.get("layout", "stack")
+        if layout_name not in LAYOUT_PRESETS:
+            available = ", ".join(sorted(LAYOUT_PRESETS.keys()))
+            raise ComposeError(
+                "UNKNOWN_LAYOUT",
+                "Layout '{}' not found. Available: {}".format(layout_name, available),
+                "spec_validation",
+                1,
+            )
+
+        preset = LAYOUT_PRESETS[layout_name]
+        allowed_slots = set(preset["slots"])
+        first_slot = preset["slots"][0]
+
         for index, block in enumerate(body):
             ensure_object(block, "'body[{}]' must be an object".format(index))
             use = block.get("use")
@@ -2427,17 +2694,43 @@ class ComposeBuilder(PatternBuilder):
                     "spec_validation",
                     1,
                 )
+            slot = block.get("slot", first_slot)
+            if slot not in allowed_slots:
+                raise ComposeError(
+                    "UNKNOWN_SLOT",
+                    "Slot '{}' at body[{}] is not valid for layout '{}'. "
+                    "Available slots: {}".format(
+                        slot, index, layout_name, ", ".join(preset["slots"])
+                    ),
+                    "spec_validation",
+                    1,
+                )
 
     def build(self, spec):
-        content_children = []
+        layout_name = spec.get("layout", "stack")
+        preset = LAYOUT_PRESETS[layout_name]
+        first_slot = preset["slots"][0]
+
+        # Group built blocks by slot
+        grouped = {}
         for block in spec["body"]:
+            slot = block.get("slot", first_slot)
             builder_fn = BLOCK_REGISTRY[block["use"]]
             nodes = builder_fn(block)
-            content_children.extend(nodes)
-        return wrap_in_projection(
+            if slot not in grouped:
+                grouped[slot] = []
+            grouped[slot].extend(nodes)
+
+        # Build layout structure
+        layout_node = preset["build"](grouped)
+
+        # Resolve size (explicit > layout default)
+        size = resolve_size(spec.get("size"), preset["default_size"])
+
+        return wrap_layout_in_projection(
             title=spec["title"],
-            content_children=content_children,
-            size=spec.get("size", "auto"),
+            layout_node=layout_node,
+            size=size,
             theme=spec.get("theme"),
         )
 
