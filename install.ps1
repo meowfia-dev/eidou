@@ -238,7 +238,7 @@ function Configure-ClaudeCode {
 
 function Configure-OpenCode {
     Write-Info "Configuring OpenCode..."
-    $ConfigFile = Join-Path $env:APPDATA "opencode\opencode.json"
+    $ConfigFile = Join-Path $env:USERPROFILE ".config\opencode\opencode.json"
     $ServerValue = @{
         type    = "local"
         command = @($TargetBin, "--mcp-transport", "stdio")
@@ -314,7 +314,7 @@ function Link-SkillForClient {
 
     switch ($ClientName) {
         "opencode" {
-            $LinkTarget = Join-Path $env:APPDATA "opencode\skill\eidou-usage"
+            $LinkTarget = Join-Path $env:USERPROFILE ".config\opencode\skill\eidou-usage"
         }
         "claude-code" {
             $LinkTarget = Join-Path $env:USERPROFILE ".claude\skills\eidou-usage"
@@ -410,7 +410,7 @@ if (-not $Client) {
 
     # OpenCode
     Write-Host "  -- OpenCode --" -ForegroundColor DarkGray
-    Write-Host "  File: $env:APPDATA\opencode\opencode.json"
+    Write-Host "  File: $env:USERPROFILE\.config\opencode\opencode.json"
     Write-Host ""
     Write-Host "    {"
     Write-Host "      `"mcp`": {"
@@ -430,7 +430,7 @@ if (-not $Client) {
         Write-Host "  Link it to your client:"
         Write-Host ""
         Write-Host "    # OpenCode" -ForegroundColor DarkGray
-        Write-Host "    New-Item -ItemType Junction -Path `"$env:APPDATA\opencode\skill\eidou-usage`" -Target `"$SkillSharedDir`""
+        Write-Host "    New-Item -ItemType Junction -Path `"$env:USERPROFILE\.config\opencode\skill\eidou-usage`" -Target `"$SkillSharedDir`""
         Write-Host ""
         Write-Host "    # Claude Code" -ForegroundColor DarkGray
         Write-Host "    New-Item -ItemType Junction -Path `"$env:USERPROFILE\.claude\skills\eidou-usage`" -Target `"$SkillSharedDir`""
