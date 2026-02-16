@@ -117,7 +117,7 @@ Common fields:
 - `pattern` (required)
 - `title` (required)
 - `description` (optional)
-- `size` (optional, default `auto`; presets: `sm`, `md`, `lg`, `xl`, `full`, `auto`; object: `{"width":1024,"height":"auto"}`; ratio object: `{"ratio":"16:9","width":960,"maxWidth":1200,"base":"lg"}`)
+- `size` (optional; width-class presets: `compact`, `standard`, `wide`; ratio presets: `dashboard`, `card`, `widescreen`, `portrait`, `square`; protocol presets: `auto`, `sm`, `md`, `lg`, `xl`, `full`; object: `{"width":1024,"height":"auto"}`; ratio object: `{"ratio":"16:9","width":960,"maxWidth":1200,"base":"lg"}`)
 - `theme` (optional projection theme override)
 
 Pattern-specific fields are below.
@@ -222,14 +222,29 @@ Multi-block content (profiles, docs) stays top-aligned.
 Control window dimensions with semantic size names.
 Explicit `size` always overrides the layout's fit-content default.
 
-| Name | Ideal For |
-|---|---|
-| `dashboard` | Multi-chart, metrics overview (16:9, 1024px) |
-| `card` | Single card, form, detail (4:3, 480px) |
-| `widescreen` | Comparison, wide layouts (21:9, 1024px) |
-| `portrait` | Tall list, chat, profile (3:4, 480px) |
-| `square` | Grid, single chart (1:1, 640px) |
-| `compact` | Simple message, alert (320x480) |
+Most patterns default to a **width-class** preset (fit-content height).
+Use **ratio** presets only for media/visual compositions where aspect stability matters.
+`sm`/`md`/`lg`/`xl` are fixed pixel protocol presets (both axes fixed) and often less ideal for content-heavy windows.
+
+**Width-class presets** (fixed width, height fits content):
+
+| Name | Output | Ideal For |
+|---|---|---|
+| `compact` | `{"width":360,"height":"auto"}` | Toasts, confirms, small dialogs |
+| `standard` | `{"width":480,"height":"auto"}` | Forms, cards, profiles (THE default) |
+| `wide` | `{"width":720,"height":"auto"}` | Tables, multi-column, articles |
+
+For 1024-wide content, use explicit `{"width":1024,"height":"auto"}` or compose layout defaults (sidebar/split/dashboard already provide this).
+
+**Ratio presets** (fixed aspect ratio canvas):
+
+| Name | Output | Ideal For |
+|---|---|---|
+| `dashboard` | 16:9, 1024px | Multi-chart, metrics overview |
+| `card` | 4:3, 480px | Single card visualization |
+| `widescreen` | 21:9, 1024px | Comparison, wide chart layouts |
+| `portrait` | 3:4, 480px | Tall visual story flow |
+| `square` | 1:1, 640px | Grid-heavy visual content |
 
 You can also use raw sizes: `auto`, `sm`, `md`, `lg`, `xl`, `full`, hybrid objects (`{"width":1024,"height":"auto"}`), or ratio objects.
 

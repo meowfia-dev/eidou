@@ -32,40 +32,62 @@ class PatternBuilder:
 PROJECTION_SIZE_PRESETS = frozenset(["auto", "sm", "md", "lg", "xl", "full"])
 
 # --- Semantic Size Presets (P008) ---
-# These map semantic names to ratio objects the backend already supports.
+# These map semantic names to valid EUIP size values.
+#
+# Width-class presets (fit-content height, fixed width):
+#   compact  -> 360 x auto   (toasts, confirms, small dialogs)
+#   standard -> 480 x auto   (forms, cards, profiles -- THE default)
+#   wide     -> 720 x auto   (tables, multi-column, articles)
+# For 1024-wide content, use explicit {"width":1024,"height":"auto"} or
+# compose layout defaults (sidebar/split/dashboard already provide this).
+#
+# Ratio presets (fixed aspect ratio canvas):
+#   dashboard, card, widescreen, portrait, square
 SEMANTIC_SIZE_PRESETS = {
     "dashboard": {"ratio": "16:9", "width": 1024, "maxWidth": 1200},
     "card": {"ratio": "4:3", "width": 480, "maxWidth": 600},
     "widescreen": {"ratio": "21:9", "width": 1024, "maxWidth": 1200},
     "portrait": {"ratio": "3:4", "width": 480, "maxWidth": 600},
     "square": {"ratio": "1:1", "width": 640, "maxWidth": 800},
-    "compact": "sm",
+    "compact": {"width": 360, "height": "auto"},
+    "standard": {"width": 480, "height": "auto"},
+    "wide": {"width": 720, "height": "auto"},
 }
 
 
 def normalize_projection_size(size):
-    if isinstance(size, str) and size in PROJECTION_SIZE_PRESETS:
-        return size
-    if isinstance(size, dict):
-        if "ratio" in size:
-            ratio = size.get("ratio")
+    resolved_size = size
+    visited = set()
+    while (
+        isinstance(resolved_size, str)
+        and resolved_size in SEMANTIC_SIZE_PRESETS
+        and resolved_size not in visited
+    ):
+        visited.add(resolved_size)
+        resolved_size = SEMANTIC_SIZE_PRESETS[resolved_size]
+
+    if isinstance(resolved_size, str) and resolved_size in PROJECTION_SIZE_PRESETS:
+        return resolved_size
+    if isinstance(resolved_size, dict):
+        if "ratio" in resolved_size:
+            ratio = resolved_size.get("ratio")
             if isinstance(ratio, str) and ":" in ratio:
                 normalized: dict[str, object] = {"ratio": ratio}
-                width = size.get("width")
+                width = resolved_size.get("width")
                 if isinstance(width, (int, float)) and not isinstance(width, bool):
                     normalized["width"] = width
-                max_width = size.get("maxWidth")
+                max_width = resolved_size.get("maxWidth")
                 if isinstance(max_width, (int, float)) and not isinstance(
                     max_width, bool
                 ):
                     normalized["maxWidth"] = max_width
-                base = size.get("base")
+                base = resolved_size.get("base")
                 if base in ("sm", "md", "lg", "xl"):
                     normalized["base"] = base
                 return normalized
 
-        width = size.get("width")
-        height = size.get("height")
+        width = resolved_size.get("width")
+        height = resolved_size.get("height")
         width_is_number = isinstance(width, (int, float)) and not isinstance(
             width, bool
         )
@@ -77,7 +99,7 @@ def normalize_projection_size(size):
         if width_is_valid and height_is_valid:
             return {"width": width, "height": height}
 
-        return size
+        return resolved_size
     return "auto"
 
 
@@ -1531,7 +1553,7 @@ class FormBuilder(PatternBuilder):
         content = col(children=content_children, gap="4")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "auto"),
+            size=spec.get("size", "standard"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -1607,7 +1629,7 @@ class DataTableBuilder(PatternBuilder):
         content = col(children=content_children, gap="2")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "auto"),
+            size=spec.get("size", {"width": 1024, "height": "auto"}),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -1671,7 +1693,7 @@ class ConfirmationBuilder(PatternBuilder):
         content = col(children=content_children, gap="4")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "sm"),
+            size=spec.get("size", "compact"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -1756,7 +1778,7 @@ class StatusDashboardBuilder(PatternBuilder):
         content = col(children=content_children, gap="4")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", {"width": 1024, "height": "auto"}),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -1863,7 +1885,7 @@ class DetailViewBuilder(PatternBuilder):
         content = col(children=content_children, gap="4")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", "standard"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -1966,7 +1988,7 @@ class ListBuilder(PatternBuilder):
         content = col(children=content_children, gap="2")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", "standard"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2052,7 +2074,7 @@ class SettingsBuilder(PatternBuilder):
         )
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", "standard"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2108,7 +2130,7 @@ class MessageBuilder(PatternBuilder):
         content = col(children=content_children, gap="3", align="center")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "sm"),
+            size=spec.get("size", "compact"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2207,7 +2229,7 @@ class ProfileBuilder(PatternBuilder):
         content = col(children=content_children, gap="3")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", "standard"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2277,7 +2299,7 @@ class ArticleBuilder(PatternBuilder):
         content = col(children=content_children, gap="3")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "lg"),
+            size=spec.get("size", "wide"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2381,7 +2403,7 @@ class ChatBuilder(PatternBuilder):
         content = col(children=content_children, gap="3")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", "standard"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2437,7 +2459,7 @@ class TerminalOutputBuilder(PatternBuilder):
         content = col(children=content_children, gap="3")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", {"width": 1024, "height": "auto"}),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2514,7 +2536,7 @@ class ProgressTrackerBuilder(PatternBuilder):
         content = col(children=content_children, gap="3")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "md"),
+            size=spec.get("size", "standard"),
             theme=spec.get("theme"),
             children=[
                 field_node(
@@ -2637,7 +2659,7 @@ class ChartBuilder(PatternBuilder):
         content = col(children=[chart], gap="2")
         return projection(
             title=spec["title"],
-            size=spec.get("size", "auto"),
+            size=spec.get("size", {"width": 1024, "height": "auto"}),
             theme=spec.get("theme"),
             children=[
                 field_node(

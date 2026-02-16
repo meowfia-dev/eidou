@@ -917,7 +917,7 @@ class TestLayoutPresets(unittest.TestCase):
         )
 
     def test_semantic_size_compact(self):
-        """compact size preset resolves to 'sm'."""
+        """compact width-class resolves to fit-content hybrid object."""
         spec = {
             "pattern": "compose",
             "title": "Compact Test",
@@ -925,7 +925,29 @@ class TestLayoutPresets(unittest.TestCase):
             "body": [{"use": "text_block", "content": "hi"}],
         }
         data = self.compose_and_validate(spec)
-        self.assertEqual(data["props"]["size"], "sm")
+        self.assertEqual(data["props"]["size"], {"width": 360, "height": "auto"})
+
+    def test_semantic_size_standard(self):
+        """standard width-class resolves to fit-content hybrid object."""
+        spec = {
+            "pattern": "compose",
+            "title": "Standard Test",
+            "size": "standard",
+            "body": [{"use": "text_block", "content": "hi"}],
+        }
+        data = self.compose_and_validate(spec)
+        self.assertEqual(data["props"]["size"], {"width": 480, "height": "auto"})
+
+    def test_semantic_size_wide(self):
+        """wide width-class resolves to fit-content hybrid object."""
+        spec = {
+            "pattern": "compose",
+            "title": "Wide Test",
+            "size": "wide",
+            "body": [{"use": "text_block", "content": "hi"}],
+        }
+        data = self.compose_and_validate(spec)
+        self.assertEqual(data["props"]["size"], {"width": 720, "height": "auto"})
 
     def test_explicit_size_overrides_layout_default(self):
         """Explicit size in spec overrides layout's default size."""
@@ -939,8 +961,8 @@ class TestLayoutPresets(unittest.TestCase):
             ],
         }
         data = self.compose_and_validate(spec)
-        # sidebar default is "dashboard", but explicit "compact" -> "sm"
-        self.assertEqual(data["props"]["size"], "sm")
+        # sidebar default is hybrid fit, but explicit "compact" overrides
+        self.assertEqual(data["props"]["size"], {"width": 360, "height": "auto"})
 
     def test_explicit_hybrid_size_overrides_layout_default(self):
         """Explicit hybrid object size in spec overrides layout default size."""
@@ -983,6 +1005,20 @@ class TestLayoutPresets(unittest.TestCase):
         }
         data = self.compose_and_validate(spec)
         self.assertEqual(data["props"]["size"], "lg")
+
+    def test_non_compose_semantic_size_dashboard(self):
+        """Semantic size names resolve for non-compose patterns too."""
+        spec = {
+            "pattern": "message",
+            "title": "Semantic Non Compose",
+            "size": "dashboard",
+            "message": "Hello",
+        }
+        data = self.compose_and_validate(spec)
+        self.assertEqual(
+            data["props"]["size"],
+            {"ratio": "16:9", "width": 1024, "maxWidth": 1200},
+        )
 
     # --- Integration Tests ---
 
